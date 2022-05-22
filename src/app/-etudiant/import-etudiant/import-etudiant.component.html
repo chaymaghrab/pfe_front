@@ -1,0 +1,18 @@
+<div class="main-content">
+    <div class="row">
+        <p> le format de votre fichier csv doit etre sous format de :<br>
+            0:nom,1:prenom,2:email,3:password,4:matricule,5:cin,6:ecole,7:departement,8:niveau,9:parcours,10:groupe,11:codegroupe,12:langue,13:soir
+            <br>
+            NB : email,cin , matricule doivent etre unique
+        </p>
+        <br>
+        </div>
+        <div class="row">
+  <label for="avatar">Choose a profile picture:</label>
+
+<input type="file" accept=".csv" (change)="fileChanged($event)">
+
+<button  (click)="uploadDocument()"> import </button>
+
+        </div>
+        </div>

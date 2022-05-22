@@ -1,0 +1,186 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
+
+                        <div class="row">
+                            <div class="col-sm-auto">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>formation</mat-label>
+                                    <mat-select formControlName="certif_id" required>
+                                        <mat-option>--</mat-option>
+                                        <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
+                                            {{cer.nom_formation}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+
+                           
+
+
+                            <div class="col-sm-auto">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>cours</mat-label>
+                                    <mat-select formControlName="cours" required>
+                                        <mat-option>--</mat-option>
+                                        <mat-option *ngFor="let cours of all_cours" [value]="cours.cours">
+                                            {{cours.cours}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-auto">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>ecole</mat-label>
+                                    <mat-select formControlName="ecole" required>
+                                        <mat-option>--</mat-option>
+                                        <mat-option [value]="'all'">all</mat-option>
+                                        <mat-option *ngFor="let ecole of all_ecoles" [value]="ecole.ecole">
+                                            {{ecole.ecole}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-sm-auto">
+                                <mat-radio-group aria-label="Select an option" formControlName="langue" required>
+                                    <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                                    <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                                    <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
+
+                                </mat-radio-group>
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary" type="submit"
+                            [disabled]=!cherchergroupe.valid>rechercher</button>
+                    </form>
+
+
+
+
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card">
+                    <ngx-datatable #myTable class="material" [rows]="rows" [columnMode]="ColumnMode.force"
+                        [headerHeight]="50
+                            " [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected"
+                        [selectionType]="SelectionType.single" (activate)="onActivate($event)"
+                        (select)='onSelect($event)' (click)='onClick($event)'>
+
+                        <ngx-datatable-column name="nom_groupe" prop="nom_groupe">
+                            <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                                {{row.nom_groupe}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="code_groupe" prop="code_groupe">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                {{row.code_groupe}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="effectif" prop="effectif">
+                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                {{row.effectif}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+
+                    </ngx-datatable>
+                    <p>{{taillesousgroupe}}</p>
+
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <form [formGroup]="groupeforma" (ngSubmit)="creergroupe()">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>nombre d'etudiant par classes</mat-label>
+                        <input type="number" formControlName="nbetud" required matInput placeholder="Ex. 30">
+                    </mat-form-field>
+                    <button class="btn btn-primary" type="submit" [disabled]=!groupeforma.valid>créer</button>
+                </form>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card">
+        
+                  <ngx-datatable #myTable2 class="material" [rows]="groupeformatp" [columnMode]="ColumnMode.force"
+                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected2"
+                    [selectionType]="SelectionType.single" (select)='onSelect2($event)'>
+        
+                    <!-- Row Detail Template -->
+                    <ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow (toggle)="onDetailToggle($event)">
+                      <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                        <div style="padding-left:35px;">
+                          <div><strong>les etudinat</strong></div>
+                          <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <th>
+                              nom 
+                            </th>
+                            <th>
+                                prenom 
+                             </th>
+                            <th>
+                              cin
+                            </th>
+                            <th>
+                              matricule
+                            </th>
+                            <tr *ngFor="let item of row[0]">
+                              <td>{{ item.user[0].nom }}</td>
+                              <td>{{ item.user[0].prenom }}</td>
+                              <td>{{ item.cin }}</td>
+                              <td>{{ item.matricule }}</td>
+                            </tr>
+                          </table>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-row-detail>
+                    <!-- Column Templates -->
+                    <ngx-datatable-column [width]="50" [resizeable]="false" [sortable]="false" [draggable]="false"
+                      [canAutoResize]="false">
+                      <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                        <a href="javascript:void(0)" [class.datatable-icon-right]="!expanded"
+                          [class.datatable-icon-down]="expanded" title="Expand/Collapse Row" (click)="toggleExpandRow(row)">
+                        </a>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Index" [width]="80">
+                      <ng-template let-rowIndex="rowIndex" let-row="row" ngx-datatable-cell-template>
+                        <strong>{{ rowIndex }}</strong>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="nom_groupe" [width]="80">
+                      <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                        <strong>groupe {{ row[0].name}}</strong>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="composer de" [width]="80">
+                      <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                        <strong>{{ row[0].length }} etudinats</strong>
+                      </ng-template>
+                    </ngx-datatable-column>
+                    
+                  </ngx-datatable>
+        
+        
+        
+                </div>
+                <button class="btn" (click)="save_grp_forma()"> enregister </button><br>
+              </div>
+
+
+
+        </div>
+    </div>
+</div>

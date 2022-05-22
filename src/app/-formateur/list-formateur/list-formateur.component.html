@@ -1,0 +1,75 @@
+<div class="main-content">
+ <!--   <div class="row">
+        <div class="col-md-12">
+
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">DataTables.net</h4>
+              </div>
+                <div class="card-body">
+                  <div class="toolbar">
+                     
+                    </div>
+                      <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                  <th>{{headerRow[0] }}</th>
+                                  <th>{{headerRow[1] }}</th>
+                                  <th>{{headerRow[2] }}</th>
+                                  <th>{{ headerRow[3] }}</th>
+                                  <th>{{ headerRow[4] }}</th>
+                                  <th class="disabled-sorting text-right">{{ headerRow[5] }}</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                  <th>{{ footerRow[0] }}</th>
+                                  <th>{{ footerRow[1] }}</th>
+                                  <th>{{ footerRow[2] }}</th>
+                                  <th>{{footerRow[3] }}</th>
+                                  <th>{{ footerRow[4] }}</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr *ngFor="let row of dataforma">
+                                    <td>{{row.user[0].nom}}</td>
+                                    <td>{{row.user[0].prenom}}</td>
+                                    <td>{{row.user[0].email}}</td>
+                                    <td>{{row.statut}}</td>
+                                    <td>{{row.telephone}}</td>
+                                    <td class="text-right">
+                                      <a  routerLink="/formateur/update/{{row.id}}" class="btn btn-warning btn-link btn-icon btn-sm edit"><i class="fa fa-edit"></i></a>
+                                      <a (click)="delete_formateur(row.id)" class="btn btn-danger btn-link btn-icon btn-sm remove"><i class="fa fa-times"></i></a>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+  -->
+
+
+  <div>
+    <ngx-datatable 
+    class="material"
+      [rows]="rows"
+      [columns]="[{ name: 'nom' }, { name: 'prenom' }, { name: 'email' },{ name: 'password' }, { name: 'statut' }, { name: 'telephone' }]"
+      [columnMode]="ColumnMode.force"
+      [headerHeight]="50"
+      [footerHeight]="50"
+      rowHeight="auto"
+      [externalPaging]="true"
+      [count]="page.totalElements"
+      [offset]="page.pageNumber"
+      [limit]="page.size"
+      (page)="setPage($event)"
+    >
+    </ngx-datatable>
+  </div>
+
+
+
+</div>

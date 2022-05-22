@@ -1,0 +1,54 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                     <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
+
+            <div class="row">
+              <div class="col-sm-auto">
+                <mat-form-field appearance="fill">
+                  <mat-label>formation</mat-label>
+                  <mat-select formControlName="certif_id" required>
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
+                      {{cer.nom_formation}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+
+
+              <div class="col-sm-auto">
+                <mat-form-field appearance="fill">
+                  <mat-label>cours</mat-label>
+                  <mat-select formControlName="cours" required>
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let cours of all_cours" [value]="cours.cours">
+                      {{cours.cours}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-auto">
+                <mat-radio-group aria-label="Select an option" formControlName="langue" required>
+                  <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                  <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                  <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+        </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
