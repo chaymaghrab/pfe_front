@@ -19,25 +19,26 @@ import Swal from 'sweetalert2';
 
 
 export class SousGroupeFormationComponent implements OnInit {
-  public grp_forma_add:{
-    nom_groupe_forma:string;
-    certification_id:number;
-    langue:string;
-    cours:string;
-
+  public grp_forma_add: {
+    nom_groupe_forma: string;
+    certification_id: number;
+    langue: string;
+    cours: string;
+    effectif: number;
 
   }
-  cherchergroupe: FormGroup | any ;
+  public affacter_etd_grp_forma: {
+    grp_forma_id: number;
+    grp_classe_id: number;
+  }
+  cherchergroupe: FormGroup | any;
+
   
-  public affacter_etd_grp_forma:{
-    grp_forma_id:number;
-    grp_classe_id:number;
-  }
   @ViewChild('myTable') table: any;
 
   @ViewChild('myTable2') table2: any;
   @ViewChild('myTable3') table3: any;
-  
+
 
   grp_classe_filtre: any = [];
   sous_groupe_classe: any = [];
@@ -45,12 +46,12 @@ export class SousGroupeFormationComponent implements OnInit {
 
   all_cours: any = [];
   all_ecoles: any = [];
-groupe_forma:any=[];
-groupe_forma_base:any=[];
+  groupe_forma: any = [];
+  groupe_forma_base: any = [];
   text: string = "";
-grp_forma_test:any=[];
+  grp_forma_test: any = [];
   taillesousgroupe = 0;
-indice_groupe=65;
+  indice_groupe = 65;
 
   rows = [];
   selected = [];
@@ -62,7 +63,7 @@ indice_groupe=65;
 
   page = new Page();
 
-  
+
   rows2: any[] = [];
   expanded: any = {};
   timeout: any;
@@ -73,29 +74,29 @@ indice_groupe=65;
     private service_classe: GroupeClasseService,
     private fb: FormBuilder,
     private http: HttpClient) {
-     
-      this.page.pageNumber = 0;
-      this.page.size = 3;
+
+    this.page.pageNumber = 0;
+    this.page.size = 3;
 
   }
 
   ngOnInit(): void {
-   this.cherchergroupe = this.fb.group({
-      certif_id: [,[Validators.required]],
-      cours: ['jour',[Validators.required]],
-      langue:['Français',[Validators.required]],
-      ecole: ['all',[Validators.required]],
+    this.cherchergroupe = this.fb.group({
+      certification_id: [, [Validators.required]],
+      cours: ['jour', [Validators.required]],
+      langue: ['Français', [Validators.required]],
+      ecole: ['all', [Validators.required]],
 
     });
-   
-    var cert={
-      type:'théorique'
+
+    var cert = {
+      type: 'théorique'
     }
     this.service_certif.get_certificationsbytype(cert).subscribe((data) => {
       console.log(data);
       this.all_certif = data;
     });
- 
+
 
     this.service_classe.get_cours().subscribe((data) => {
       console.log(data);
@@ -107,23 +108,21 @@ indice_groupe=65;
       this.all_ecoles = data;
     });
 
-    this.service_grp_formation.get_grp_forma().subscribe((data:any) => {
-    data.forEach((element:any) => {
-//this.grp_forma_test['name']=element.nom_groupe_forma;
-      this.service_grp_formation.get_sous_grp(element.id).subscribe((res:any) => {
-        res.forEach((elem) => {
-          elem['effectif'] = elem.etudiants.length;
-        });
-        res['name']=element.nom_groupe_forma;
-         this.groupe_forma.push(res);
-         this.groupe_forma = [...this.groupe_forma];
-         this.selected3 = [this.groupe_forma[0]];
-        });
-      
+    this.refrech_grp_forma();
+
+    this.cherchergroupe.get("certification_id").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({certification_id: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
+    });
+    this.cherchergroupe.get("cours").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({cours: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
     });
     
-    
-  });
+    this.cherchergroupe.get("langue").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({langue: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
+    });
 
 
   }
@@ -131,31 +130,31 @@ indice_groupe=65;
 
 
   recherche_grp() {
-   console.log(this.cherchergroupe.value);
     this.service_grp_formation.get_classe_byfiltre(this.cherchergroupe.value)
       .subscribe((data: any) => {
-       data.forEach((element:any) => {
+        //console.log(data);
+
+        data.forEach((element: any) => {
           element['effectif'] = element.etudiants.length;
         });
         this.sous_groupe_classe = [];
         this.taillesousgroupe = 0;
         this.rows = data;
-       if(this.groupe_forma.length != 0)
-       {
-        this.groupe_forma.forEach(element => {
-          element.forEach(elem => {
-            this.rows =  this.rows.filter(t=>t.code_groupe !=elem.code_groupe);
-          
-         });
-       });
-       this.selected = [this.rows[0]];
-      }
+        if (this.groupe_forma.length != 0) {
+          this.groupe_forma.forEach(element => {
+            element.forEach(elem => {
+              this.rows = this.rows.filter(t => t.code_groupe != elem.code_groupe);
+
+            });
+          });
+          this.selected = [this.rows[0]];
+        }
         this.selected = [this.rows[0]];
         // this.grp_classe_filtre = data;
 
       });
-     
-//console.log(this.cherchergroupe.value)
+
+    //console.log(this.cherchergroupe.value)
   }
 
   afficher_etudiants(id: any) {
@@ -176,7 +175,7 @@ indice_groupe=65;
   }
   onSelect3({ selected3 }) {
     console.log('Select Event', selected3, this.selected3);
-console.log(this.selected3);
+    console.log(this.selected3);
   }
 
   onActivate(event) {
@@ -265,55 +264,59 @@ console.log(this.selected3);
       console.log('non');
   }
 
-down(){
-  if(this.sous_groupe_classe.length != 0)
-  {this.sous_groupe_classe['name']=String.fromCharCode(this.indice_groupe);
-  this.sous_groupe_classe['certif']=this.cherchergroupe.value.certif_id;
-  this.sous_groupe_classe['langue']=this.cherchergroupe.value.langue;
-  this.sous_groupe_classe['cours']=this.cherchergroupe.value.cours;
+  down() {
+    if (this.sous_groupe_classe.length != 0) {
+      this.sous_groupe_classe['name'] = String.fromCharCode(this.indice_groupe);
+      this.sous_groupe_classe['certif'] = this.cherchergroupe.value.certification_id;
+      this.sous_groupe_classe['langue'] = this.cherchergroupe.value.langue;
+      this.sous_groupe_classe['cours'] = this.cherchergroupe.value.cours;
+      this.sous_groupe_classe['effectif'] = this.taillesousgroupe;
 
-  this.indice_groupe++;
-    this.groupe_forma.push(this.sous_groupe_classe);
-    this.groupe_forma = [...this.groupe_forma];
-    this.selected3 = [this.groupe_forma[0]];
-    this.sous_groupe_classe = [];
-    this.sous_groupe_classe = [...this.sous_groupe_classe];
-    this.taillesousgroupe=0;
-    console.log(this.groupe_forma);
-  }
-    else{
+      this.indice_groupe++;
+      this.groupe_forma.push(this.sous_groupe_classe);
+      this.groupe_forma = [...this.groupe_forma];
+      this.selected3 = [this.groupe_forma[0]];
+      this.sous_groupe_classe = [];
+      this.sous_groupe_classe = [...this.sous_groupe_classe];
+      this.taillesousgroupe = 0;
+      console.log(this.groupe_forma);
+    }
+    else {
       console.log('non');
     }
 
-}
-up(row:any)
-{if(this.groupe_forma.length != 0)
-  {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    type: 'warning',
-    showCancelButton: true,
-    confirmButtonClass: 'btn btn-success',
-    cancelButtonClass: 'btn btn-danger',
-    confirmButtonText: 'Yes, remove it!',
-     buttonsStyling: false
-  }).then((result) => {
-    if (result.value) {
-  let x = this.table3.bodyComponent.getRowIndex(row);
-  this.groupe_forma.splice(x, 1);
-  this.groupe_forma = [...this.groupe_forma];
-  this.selected3 = [this.groupe_forma[0]];
-  row.forEach(element => {
-    this.sous_groupe_classe.push(element);
-    this.sous_grp_length(element, 'add');
-  });
-  this.sous_groupe_classe = [...this.sous_groupe_classe];
-  this.selected2 = [this.sous_groupe_classe[0]];
-}});
-}
-}
-  
+  }
+  up(row: any) {
+    // console.log(this.groupe_forma);
+    if (this.groupe_forma.length != 0) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger',
+        confirmButtonText: 'Yes, remove it!',
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.value) {
+          let x = this.table3.bodyComponent.getRowIndex(row);
+          this.groupe_forma.splice(x, 1);
+          // this.groupe_forma = [...this.groupe_forma];
+          // console.log(this.groupe_forma);
+
+          this.selected3 = [this.groupe_forma[0]];
+          row.forEach(element => {
+            this.sous_groupe_classe.push(element);
+            this.sous_grp_length(element, 'add');
+          });
+          this.sous_groupe_classe = [...this.sous_groupe_classe];
+          this.selected2 = [this.sous_groupe_classe[0]];
+        }
+      });
+    }
+  }
+
   onPage(event) {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
@@ -321,7 +324,7 @@ up(row:any)
     }, 100);
   }
 
- 
+
 
   toggleExpandRow(row) {
     console.log('Toggled Expand Row!', row);
@@ -332,41 +335,82 @@ up(row:any)
     console.log('Detail Toggled', event);
   }
 
-  effectif_grp_final(row:any){
-    let x=0;
+  effectif_grp_final(row: any) {
+    let x = 0;
     row.forEach(element => {
-    x+=element.effectif;
+      x += element.effectif;
     });
     return x;
   }
 
-  save_grp_forma()
-  {
-    this.groupe_forma.forEach(element => {
-      this.grp_forma_add={
-        nom_groupe_forma:element.name,
-        certification_id:element.certif,
-        langue:element.langue,
-        cours:element.cours
-      }
-      
-      this.service_grp_formation.add_grp_forma(this.grp_forma_add).subscribe((data:any) => {
-          element.forEach((elem:any) => {
-            this.affacter_etd_grp_forma={
-              grp_forma_id:data.id,
-              grp_classe_id:elem.id,
-              
-           }
-           this.service_grp_formation.affecter_etd_grp_forma(this.affacter_etd_grp_forma).subscribe((res:any) => {
-            console.log(res);
-         });
-          });
-          
-        });
-        
+  save_grp_forma() {
+    
+    this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((rs: any) => {
+      rs.forEach(rs_elem => {
+        this.service_grp_formation.delete_grp_forma(rs_elem.id).subscribe(resul=>
+        {
+          console.log(resul);
+        })
       });
-  
-   
-  }
 
+    this.groupe_forma.forEach(element => {
+      this.grp_forma_add = {
+        nom_groupe_forma: element.name,
+        certification_id: element.certif,
+        langue: element.langue,
+        cours: element.cours,
+        effectif: element.effectif
+      }
+      console.log(this.grp_forma_add);
+      this.service_grp_formation.add_grp_forma(this.grp_forma_add).subscribe((data: any) => {
+        element.forEach((elem: any) => {
+          this.affacter_etd_grp_forma = {
+            grp_forma_id: data.id,
+            grp_classe_id: elem.id,
+
+          }
+          this.service_grp_formation.affecter_etd_grp_forma(this.affacter_etd_grp_forma).subscribe((res: any) => {
+            console.log(res);
+          });
+        });
+
+      });
+
+    });
+  });
+
+  }
+  refrech_grp_forma() {
+    this.groupe_forma = [];
+    this.rows = [];
+    this.sous_groupe_classe = [];
+    this.taillesousgroupe = 0;    this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
+      console.log(this.cherchergroupe.value);
+      data.forEach((element: any) => {
+        //this.grp_forma_test['name']=element.nom_groupe_forma;
+        this.service_grp_formation.get_sous_grp(element.id).subscribe((res: any) => {
+          res.forEach((elem) => {
+            elem['effectif'] = elem.etudiants.length;
+          });
+          res['name'] = element.nom_groupe_forma;
+       /*   res['certif'] = element.certification_id;
+          res['langue'] = element.langue;
+          res['cours'] = element.cours;
+          res['effectif'] = element.effectif;*/
+          this.groupe_forma.push(res);
+          console.log(this.groupe_forma);
+          this.groupe_forma = [...this.groupe_forma];
+          this.selected3 = [this.groupe_forma[0]];
+        });
+
+      });
+
+
+    });
+
+    
+  }
+  changevalue() {
+    console.log('aaaaa');
+  }
 }

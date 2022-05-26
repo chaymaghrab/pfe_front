@@ -24,9 +24,9 @@ import { LocalModule } from './-local/-local.module';
 import { SurveillantModule } from './-surveillant/-surveillant.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
@@ -52,13 +52,15 @@ import { BrowserModule } from '@angular/platform-browser';
         SurveillantModule,
         HttpClientModule,
         ModalModule.forRoot(),
+        
         MatFormFieldModule,
         MatInputModule
-        
+
 
     ],
     exports:[
-        
+        MatFormFieldModule,
+        MatInputModule,
     ],
     declarations: [
         AppComponent,

@@ -9,7 +9,7 @@
                             <div class="col-sm-auto">
                                 <mat-form-field appearance="fill">
                                     <mat-label>formation</mat-label>
-                                    <mat-select formControlName="certif_id" required>
+                                    <mat-select formControlName="certification_id" required>
                                         <mat-option>--</mat-option>
                                         <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
                                             {{cer.nom_formation}}
@@ -136,7 +136,7 @@
                             <th>
                               matricule
                             </th>
-                            <tr *ngFor="let item of row[0]">
+                            <tr *ngFor="let item of row">
                               <td>{{ item.user[0].nom }}</td>
                               <td>{{ item.user[0].prenom }}</td>
                               <td>{{ item.cin }}</td>
@@ -162,12 +162,12 @@
                     </ngx-datatable-column>
                     <ngx-datatable-column name="nom_groupe" [width]="80">
                       <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        <strong>groupe {{ row[0].name}}</strong>
+                        <strong>groupe {{ row.name}}</strong>
                       </ng-template>
                     </ngx-datatable-column>
                     <ngx-datatable-column name="composer de" [width]="80">
                       <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        <strong>{{ row[0].length }} etudinats</strong>
+                        <strong>{{ row.length }} etudinats</strong>
                       </ng-template>
                     </ngx-datatable-column>
                     

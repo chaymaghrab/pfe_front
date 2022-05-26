@@ -16,6 +16,20 @@ import Swal from 'sweetalert2';
   styleUrls: ['./auto-sous-groupe-forma.component.css']
 })
 export class AutoSousGroupeFormaComponent implements OnInit {
+
+  public groupeformatp_add: {
+    nom_groupe_forma: string;
+    certification_id: number;
+    langue: string;
+    cours: string;
+    effectif: number;
+
+  }
+  public affacter_etd_grp_forma_tp: {
+    grp_forma_id: number;
+    etudiant_id:Array<number>;
+  }
+
   @ViewChild('myTable') table: any;
 
   @ViewChild('myTable2') table2: any;
@@ -24,6 +38,7 @@ export class AutoSousGroupeFormaComponent implements OnInit {
   groupeforma: FormGroup | any;
   indice_groupe = 65;
 
+  opt_selected:any;
   groupeformatp: any = [];
   list_etd_groupe: any = [];
   all_certif: any = []
@@ -38,7 +53,8 @@ export class AutoSousGroupeFormaComponent implements OnInit {
   taillesousgroupe = 0;
   expanded: any = {};
   timeout: any;
-
+  titletext="";
+  htmltext="";
   page = new Page();
 
 
@@ -49,10 +65,10 @@ export class AutoSousGroupeFormaComponent implements OnInit {
 
   ngOnInit(): void {
     this.cherchergroupe = this.fb.group({
-      certif_id: [2, [Validators.required]],
+      certification_id: [3, [Validators.required]],
       cours: ['jour', [Validators.required]],
-      langue: ['fr', [Validators.required]],
-      ecole: ['ecole1', [Validators.required]],
+      langue: ['Français', [Validators.required]],
+      ecole: ['all', [Validators.required]],
     });
 
     this.groupeforma = this.fb.group({
@@ -77,6 +93,23 @@ export class AutoSousGroupeFormaComponent implements OnInit {
       console.log(data);
       this.all_ecoles = data;
     });
+
+    this.refrech_grp_forma();
+    this.cherchergroupe.get("certification_id").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({certification_id: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
+    });
+    this.cherchergroupe.get("cours").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({cours: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
+    });
+    
+    this.cherchergroupe.get("langue").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({langue: x,}, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
+    });
+
+
   }
 
   onClick(event) {
@@ -144,30 +177,29 @@ export class AutoSousGroupeFormaComponent implements OnInit {
   creergroupe() {
     //console.log( this.groupeforma.value.nbetud);
     if(this.list_etudiant.length != 0){
-
+      this.opt_selected='';
     this.groupeformatp = [];
     this.list_etd_groupe = [];
     let x = this.list_etudiant.length;
     let y = this.groupeforma.value.nbetud;
     let incr = 0;
+    this.titletext="";
 if(x%y==0){
-  var titletext=Math.floor(x / y) + " groupe de "+y;
-  var htmltext='';
+   this.titletext=Math.floor(x / y) + " groupe de "+y;
+   this.htmltext='';
 }
 else{
-  var titletext=Math.floor(x / y) + " groupe de "+y+" et un groupe de "+x%y;
-  var htmltext='<div class="form-group">' +
-  '<input type="radio" name="opt" value="1"checked><label for="1">repartir le dernier groupe</label></div>'+
-  '<div class="form-group"><input type="radio" name="opt" value="2"><label for="2">creer un nouveau groupe</label>'+
-    '</div>'
+   this.titletext="";
+   this.htmltext=Math.floor(x / y) + ' groupe de '+y+' et un groupe de '+x%y+'<br><br><input type="radio" name="opt" value="1"checked><label for="1">repartir le dernier groupe</label><br>'+
+  '<input type="radio" name="opt" value="2"><label for="2">creer un nouveau groupe</label>';
 }
 
-
+//console.log(this.titletext);
     Swal.fire({
       title: x + " etudiants ",
-      text: titletext,
+      text: this.titletext,
       type: 'warning',
-      html: htmltext,
+      html:this.htmltext,
       showCancelButton: true,
       confirmButtonClass: 'btn btn-success',
       cancelButtonClass: 'btn btn-danger',
@@ -182,36 +214,54 @@ else{
             this.list_etd_groupe.push(this.list_etudiant[i]);
           }
           this.list_etd_groupe['name'] = String.fromCharCode(this.indice_groupe);
+          this.list_etd_groupe['certif'] = this.cherchergroupe.value.certification_id;
+          this.list_etd_groupe['langue'] = this.cherchergroupe.value.langue;
+          this.list_etd_groupe['cours'] = this.cherchergroupe.value.cours;
+          this.list_etd_groupe['effectif'] = this.list_etd_groupe.length;
 
           this.indice_groupe++;
-          this.groupeformatp.push([this.list_etd_groupe]);
+          this.groupeformatp.push(this.list_etd_groupe);
+          console.log(this.groupeformatp);
+
           incr += y;
           this.list_etd_groupe = [];
         }
+        this.opt_selected=$(document.querySelector('input[name="opt"]:checked')).val()+'';
+
+      
+
         if (x > incr && incr > 0) {
+          console.log(this.opt_selected);
           this.list_etd_groupe = [];
+          if(this.opt_selected==='2'){
           for (let j = incr; j < x; j++) {
             this.list_etd_groupe.push(this.list_etudiant[j]);
           }
           this.list_etd_groupe['name'] = String.fromCharCode(this.indice_groupe);
+          this.list_etd_groupe['certif'] = this.cherchergroupe.value.certification_id;
+          this.list_etd_groupe['langue'] = this.cherchergroupe.value.langue;
+          this.list_etd_groupe['cours'] = this.cherchergroupe.value.cours;
+          this.list_etd_groupe['effectif'] = this.list_etd_groupe.length;
           this.indice_groupe++;
-          this.groupeformatp.push([this.list_etd_groupe]);
-
+          this.groupeformatp.push(this.list_etd_groupe);
         }
-
+        else{
+        
+        }
+      }
         Swal.fire(
           {
             title: 'created!',
-            text: 'Your groupes has been created.',
+            text:  $(document.querySelector('input[name="opt"]:checked')).val()+'',
             type: 'success',
             confirmButtonClass: "btn btn-success",
             buttonsStyling: false
           }
         )
-        var tesss=$(document.querySelector('input[name="opt"]:checked')).val();
-        console.log(tesss)
+      
+     
         this.groupeformatp = [...this.groupeformatp];
-        console.log(this.groupeformatp);
+      
       }
     })
     /*  while (x - incr >= y) {
@@ -243,5 +293,74 @@ else{
 
   save_grp_forma() {
 
+
+    this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((rs: any) => {
+      rs.forEach(rs_elem => {
+        this.service_grp_formation.delete_grp_forma(rs_elem.id).subscribe(resul=>
+        {
+          console.log(resul);
+        })
+      });
+    this.groupeformatp.forEach(element => {
+      var list_etd_id=[];
+     // console.log(element)
+      this.groupeformatp_add = {
+        nom_groupe_forma: element.name,
+        certification_id: element.certif,
+        langue: element.langue,
+        cours: element.cours,
+        effectif: element.effectif
+      }
+      console.log(this.groupeformatp_add);
+    this.service_grp_formation.add_grp_forma(this.groupeformatp_add).subscribe((data: any) => {
+      console.log(data);
+        element.forEach((elem: any) => {
+          list_etd_id.push( elem.id);
+
+        });
+        this.affacter_etd_grp_forma_tp = {
+          grp_forma_id: data.id,
+          etudiant_id: list_etd_id,
+        }
+         console.log( this.affacter_etd_grp_forma_tp )
+         this.service_grp_formation.affecter_etd_grp_forma_tp(this.affacter_etd_grp_forma_tp).subscribe((res: any) => {
+            console.log(res);
+          });
+
+      });
+
+    });
+  });
   }
+
+  refrech_grp_forma() {
+    this.groupeformatp = [];
+    this.taillesousgroupe = 0;
+    this.list_etudiant = [];
+       this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
+      console.log(this.cherchergroupe.value);
+      data.forEach((element: any) => {
+        //this.grp_forma_test['name']=element.nom_groupe_forma;
+        this.service_grp_formation.get_etudiants(element.id).subscribe((res: any) => {
+          
+          res['name'] = element.nom_groupe_forma;
+          res['certif'] = element.certification_id;
+          res['langue'] = element.langue;
+          res['cours'] = element.cours;
+          res['effectif'] = element.effectif;
+          this.groupeformatp.push(res);
+          console.log(this.groupeformatp);
+          this.groupeformatp = [...this.groupeformatp];
+          this.selected = [this.groupeformatp[0]];
+        });
+
+      });
+
+
+    });
+
+    
+  }
+
+
 }
