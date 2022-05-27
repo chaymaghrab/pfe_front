@@ -55,42 +55,7 @@
 
             </div>
 
-            <!--   <div class="form-group has-label">
-              <label class="control-label" for="">formation</label><br>
-              <select name="certif" id="certif" formControlName="certif_id">
-                <option value="{{cer.id}}" #certif *ngFor="let cer of all_certif">{{cer.nom_formation}}
-                </option>
-              </select>
-            </div>
-            <div class="form-group has-label">
-              <label class="control-label" for="">semstre</label><br>
-              <select name="semestre" id="semestre" formControlName="semestre">
-                <option value="1">semestre 1</option>
-                <option value="2">semestre 2</option>
-              </select>
-            </div>
-            <div class="form-group has-label">
-              <label class="control-label" for="">cours</label><br>
-              <select name="cours" id="cours" formControlName="cours">
-                <option *ngFor="let cours of all_cours" value="{{cours.cours}}">{{cours.cours}}</option>
-              </select>
-            </div>
-            <div class="form-group has-label">
-              <label class="control-label" for="">ecole</label><br>
-              <select name="ecole" id="ecole" formControlName="ecole">
-                <option *ngFor="let ecole of all_ecoles" value="{{ecole.ecole}}">{{ecole.ecole}}
-                </option>
-              </select>
-            </div>
-            <div class="form-group has-label">
-              <label class="control-label" for="">langue</label><br>
-              <select name="langue" id="langue" formControlName="langue">
-                <option value="ar">arabe</option>
-                <option value="fr">francais</option>
-                <option value="ag">anglais</option>
-              </select>
-            </div><br>
-          -->
+         
             <button class="btn btn-primary" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
           </form>
 
@@ -197,7 +162,8 @@
       <div class="col-md-12">
         <div class="card">
 
-          <ngx-datatable #myTable3 class="material" [rows]="groupe_forma" [columnMode]="ColumnMode.force"
+          <ngx-datatable #myTable3 class="material" [
+          rows]="groupe_forma" [columnMode]="ColumnMode.force"
             [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected3"
             [selectionType]="SelectionType.single" (select)='onSelect3($event)'>
 

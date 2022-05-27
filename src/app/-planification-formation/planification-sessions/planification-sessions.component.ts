@@ -10,6 +10,7 @@ import { GroupeFormationService } from 'app/services/groupe_formation/groupe-for
 import { LocalService } from 'app/services/local/local.service';
 import { SeanceService } from 'app/services/seance/seance.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { element } from 'protractor';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -58,10 +59,12 @@ export class PlanificationSessionsComponent implements OnInit {
 
   rowselected: any = [];
   rowindex: any;
-  b_salle: Boolean;
-  b_formateur: Boolean;
+   b_salle: Boolean;
+   b_formateur: Boolean;
 
   grp_form_ids:any=[];
+formateur_ids:any=[];
+ testchay:any=[];
 
   constructor(private service_certif: CertificationService,
     private service_grp_formation: GroupeFormationService,
@@ -166,11 +169,12 @@ export class PlanificationSessionsComponent implements OnInit {
   }
 
   recherche_grp() {
-    this.groupe_forma = [];
-    this.groupe_forma = [...this.groupe_forma];
+   
     //console.log(this.cherchergroupe.value);
     this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
-      // console.log(data);
+      this.groupe_forma = [];
+      console.log( this.groupe_forma);
+       console.log(data);
       //this.groupe_forma = data;
       data.forEach((element: any) => {
         this.service_grp_formation.get_sous_grp(element.id).subscribe((res: any) => {
@@ -182,20 +186,20 @@ export class PlanificationSessionsComponent implements OnInit {
           res['formateur'] = element.formateur_id;
           
           
-          this.service_seance.get_senace(element.id).subscribe((resul: any) => {
+          this.service_seance.get_seance(element.id).subscribe((resul: any) => {
             res['datedeb'] = resul.datedeb;
             res['datefin'] = resul.datefin;
           });
 
           this.groupe_forma.push(res);
           // console.log( this.groupe_forma);
+          
           this.groupe_forma = [...this.groupe_forma];
           this.selected = [this.groupe_forma[0]];
-
         });
       });
     });
-
+    
 
   }
 
@@ -216,6 +220,7 @@ export class PlanificationSessionsComponent implements OnInit {
     this.b_formateur= true;
     var i = 0;
     this.grp_form_ids=[];
+    this.formateur_ids=[];
     let nv_local = this.planifier_forma.value.local_id;
     let nv_formateur = this.planifier_forma.value.formateur_id;
     let nv_date = this.getdate(this.planifier_forma.value.date);
@@ -250,7 +255,7 @@ export class PlanificationSessionsComponent implements OnInit {
     }
     
    
-    this.service_grp_formation.get_grp_forma_bylocal(nv_local).subscribe((d: any) => {
+    /*this.service_grp_formation.get_grp_forma_bylocal(nv_local).subscribe((d: any) => {
     
       d.forEach((elt:any) => {
        this.grp_form_ids.push(elt.id);
@@ -259,37 +264,54 @@ export class PlanificationSessionsComponent implements OnInit {
       this.service_seance.get_seance_by_list_grps_id(this.grp_form_ids).subscribe((res: any) => {
 
         console.log(res);
+        if(res.length!=0)
+        {
+
+          this.testchay=['aaaaaa'];
+          //this.testchay=[...this.testchay];
+          while(this.b_salle)
+          {
+          res.forEach(element => {
+            
+            let dateOne = new Date(element.datedeb);
+            let datetwo = new Date(element.datefin);
+            //console.log(dateOne);
+            if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)) {
+              this.b_salle= false;
+              console.log('aaaaa')
+            }
+
+          });
+        }
+         // this.b_salle= false;
+        }
+               });
+    });*/
+
+  /*  this.service_grp_formation.get_grp_forma_byformateur(nv_formateur).subscribe((d: any) => {
+    
+      d.forEach((elt:any) => {
+       this.formateur_ids.push(elt.id);
+      });
+
+      this.service_seance.get_seance_by_list_grps_id(this.formateur_ids).subscribe((res: any) => {
+
+        console.log(res);
+        if(res.length==0)
+        {
+          this.b_formateur= false;
+        }
                });
     });
-
+*/
     if (this.b_salle && this.b_formateur) {
       this.rowselected['salle'] = nv_local;
       this.rowselected['formateur'] = nv_formateur;
       this.rowselected['datedeb'] = (this.getdate(this.planifier_forma.value.date))[0];
       this.rowselected['datefin'] = (this.getdate(this.planifier_forma.value.date))[1];
-      this.update_grp_form = {
-        formateur_id: this.rowselected['formateur'] ,
-        local_id: this.rowselected['salle'] ,
-      }
      
 
-      this.service_grp_formation.update_grp_forma(this.rowselected['id'] ,this.update_grp_form).subscribe((data: any) => {
-        console.log(data);
-
-        this.add_seance_forma = {
-          datedeb: this.rowselected['datedeb'] ,
-          datefin: this.rowselected['datefin'] ,
-          type: this.rowselected['cours'] ,
-          groupe_formation_id: data.id
-        }
-      this.service_seance.add_seance(this.add_seance_forma).subscribe((res: any) => {
-          console.log(res);
-        });
-
-
-        
-      });
-
+     
       this.modalRef.hide();
 
     }
@@ -318,4 +340,51 @@ export class PlanificationSessionsComponent implements OnInit {
 
   }
 
+  save_grp_forma()
+  {
+    if(this.groupe_forma.length!=0)
+    {
+      this.groupe_forma.forEach((element:any) => {
+        
+
+        this.update_grp_form = {
+          formateur_id: element['formateur'] ,
+          local_id: element['salle'] ,
+        }
+    this.service_grp_formation.update_grp_forma(element['id'] ,this.update_grp_form).subscribe((data: any) => {
+      //console.log(data);
+
+      this.add_seance_forma = {
+        datedeb: element['datedeb'] ,
+        datefin: element['datefin'] ,
+        type: element['cours'] ,
+        groupe_formation_id: data.id
+      }
+    /*  console.log(element['id']);
+      this.service_seance.get_seance(element['id']).subscribe((resul: any) => {
+       if( Object.keys(resul).length!=0)
+        {
+          this.service_seance.update_seance(resul.id,this.add_seance_forma).subscribe((rest: any) => {
+            console.log(rest);
+
+          });
+        }
+        else{*/
+          this.service_seance.add_seance(this.add_seance_forma).subscribe((res: any) => {
+            console.log(res);
+          });
+        /*}
+       
+      });
+*/
+  
+    });
+
+
+  });
+
+
+  }
+  }
 }
+

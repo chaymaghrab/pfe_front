@@ -1,102 +1,207 @@
 <div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+          <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
+
+            <div class="col-sm-auto">
+              <mat-form-field appearance="fill">
+                <mat-label>formation</mat-label>
+                <mat-select formControlName="certification_id" required>
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
+                    {{cer.nom_formation}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <button class="btn btn-primary" type="submit">rechercher</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-6">
+
+        <ngx-datatable #myTable class="material" [rows]="allgroupe_classes" [columnMode]="ColumnMode.force"
+          [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="6" [selected]="selected"
+          [selectionType]="SelectionType.single" (activate)="onActivate($event)" (select)='onSelect($event)'
+          (click)='onClick($event)'>
+
+          <ngx-datatable-column name="departement" prop="departement">
+            <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+              {{row.departement}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="niveau" prop="niveau">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{row.niveau}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="ecole" prop="ecole">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{row.ecole}}
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      
    
-<table class="table">
-    <thead class="thead-dark">
-      <tr>
-    <th>nom groupe</th>
-    <th>code groupe</th>
-    <th>niveau</th>
-    <th>department</th>
-    <th>ecole</th>
-    <th>parcours</th>
-    <th>cours</th>
-    <th>
-    </th>
-    <th>
-    </th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let item of allgroupe_classes">
-            <td>{{item.nom_groupe}}</td>
-            <td>{{item.code_groupe}}</td>
-            <td>{{item.niveau}}</td>
-            <td>{{item.departement}}</td>
-            <td>{{item.ecole}}</td>
-            <td>{{item.langue}}</td>
-            <td>{{item.cours}}</td>
-            <td><button type="button" class="btn btn-primary"  (click)="openModal2(allcertif,item.id)">consulter certif</button></td>
-            <td>
-              <button type="button" class="btn btn-primary" (click)="openModal(template,item.id)">add certif</button>
-            </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <ng-template #template>
-    <div class="modal-header">
-      <h4 class="modal-title pull-left">affecter formation</h4>
-      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-        <span aria-hidden="true" class="visually-hidden">&times;</span>
-      </button>
-    </div><br>
-    <form  #f="ngForm" novalidate (ngSubmit)="certif_add(f.value,f.valid)">
-      <div class="form-group has-label">
-        <label class="control-label" for="">nombre d'heure :
-            <span class="star">*</span>
-        </label>
-        <input type="number" class="form-control" name="nom" id="nbheure" [ngModel]="addnbheure.nbheure"
-          required  #nbheure="ngModel">
-        <small [hidden]="nbheure.valid || (nbheure.pristine && !f.submitted)" class="text-danger">
-          nombre d'heure  est obligatoire
-        </small>
-    </div><br>
-    <div class="form-group has-label">
-      <label class="control-label" for="">semstre :
-          <span class="star">*</span>
-      </label>
-      <select name="semestre" id="semestre" class="form-control">
-          <option value="1">semestre 1</option>
-          <option value="2">semestre 2</option>
-      </select>
-    </div><br>
-    <div class="form-group has-label">
-      <label class="control-label" for="">formation :
-          <span class="star">*</span>
-      </label>
-      <select name="certif" id="certifid" class="form-control">
-          <option  *ngFor="let cer of all_certif" value="{{cer.id}}">{{cer.nom_formation}}</option>
-          </select><br>
-    </div><br>
-    <button type="submit" class="btn btn-primary"  style="text-align: center;display: block;
-    margin: auto;">affecter formation</button><br>
-  </form>
-  </ng-template>
+      </div>
 
-  <ng-template #allcertif>
-    <div class="modal-header">
-      <h4 class="modal-title pull-left">les certifications</h4>
-      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-        <span aria-hidden="true" class="visually-hidden">&times;</span>
-      </button>
+      <div class="col-md-1.5">
+        <button class="btn" (click)="add(selected[0])"> add
+          <span class="btn-label btn-label-right"><i class="nc-icon nc-minimal-right"></i></span>
+        </button><br>
+
+        <button class="btn" (click)="delete(selected2[0])">
+          <span class="btn-label"><i class="nc-icon nc-minimal-left"></i></span>
+          delete </button><br>
+
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+
+
+          <ngx-datatable #myTable2 class="material" [rows]="grp_certif" [columnMode]="ColumnMode.force"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected2"
+            [selectionType]="SelectionType.single" (select)='onSelect2($event)'>
+
+            <ngx-datatable-column name="departement" prop="departement">
+              <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                {{row.departement}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="niveau" prop="niveau">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{row.niveau}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="ecole" prop="ecole">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{row.ecole}}
+              </ng-template>
+            </ngx-datatable-column>
+
+
+          </ngx-datatable>
+
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+
     </div>
-    <table>
-        <th>
-          semestre
-        </th>
-        <th>
-          formation
-        </th>
-        <th>
-          nombre d'heure
-        </th>
-      <tr *ngFor="let all_certif of all_certif_id let i=index">
-        <td>{{all_certif.semestre}}</td>
-        <td>{{nom_formations[i]}}</td>
-        <td>{{all_certif.nbheure}}</td>
-       <button class="btn btn-danger"(click)="deletecertif(all_certif.id)">supprimer</button>
-      </tr>
-    </table>
-  </ng-template>
+  </div>
 
-</div>
+  <!-- 
+    <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th>nom groupe</th>
+                <th>code groupe</th>
+                <th>niveau</th>
+                <th>department</th>
+                <th>ecole</th>
+                <th>parcours</th>
+                <th>cours</th>
+                <th>
+                </th>
+                <th>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of allgroupe_classes">
+                <td>{{item.nom_groupe}}</td>
+                <td>{{item.code_groupe}}</td>
+                <td>{{item.niveau}}</td>
+                <td>{{item.departement}}</td>
+                <td>{{item.ecole}}</td>
+                <td>{{item.langue}}</td>
+                <td>{{item.cours}}</td>
+                <td><button type="button" class="btn btn-primary" (click)="openModal2(allcertif,item.id)">consulter
+                    certif</button></td>
+                <td>
+                  <button type="button" class="btn btn-primary" (click)="openModal(template,item.id)">add
+                    certif</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <ng-template #template>
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">affecter formation</h4>
+              <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div><br>
+            <form #f="ngForm" novalidate (ngSubmit)="certif_add(f.value,f.valid)">
+              <div class="form-group has-label">
+                <label class="control-label" for="">nombre d'heure :
+                  <span class="star">*</span>
+                </label>
+                <input type="number" class="form-control" name="nom" id="nbheure" [ngModel]="addnbheure.nbheure"
+                  required #nbheure="ngModel">
+                <small [hidden]="nbheure.valid || (nbheure.pristine && !f.submitted)" class="text-danger">
+                  nombre d'heure est obligatoire
+                </small>
+              </div><br>
+              <div class="form-group has-label">
+                <label class="control-label" for="">semstre :
+                  <span class="star">*</span>
+                </label>
+                <select name="semestre" id="semestre" class="form-control">
+                  <option value="1">semestre 1</option>
+                  <option value="2">semestre 2</option>
+                </select>
+              </div><br>
+              <div class="form-group has-label">
+                <label class="control-label" for="">formation :
+                  <span class="star">*</span>
+                </label>
+                <select name="certif" id="certifid" class="form-control">
+                  <option *ngFor="let cer of all_certif" value="{{cer.id}}">{{cer.nom_formation}}</option>
+                </select><br>
+              </div><br>
+              <button type="submit" class="btn btn-primary" style="text-align: center;display: block;
+            margin: auto;">affecter formation</button><br>
+            </form>
+          </ng-template>
+
+          <ng-template #allcertif>
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">les certifications</h4>
+              <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <table>
+              <th>
+                semestre
+              </th>
+              <th>
+                formation
+              </th>
+              <th>
+                nombre d'heure
+              </th>
+              <tr *ngFor="let all_certif of all_certif_id let i=index">
+                <td>{{all_certif.semestre}}</td>
+                <td>{{nom_formations[i]}}</td>
+                <td>{{all_certif.nbheure}}</td>
+                <button class="btn btn-danger" (click)="deletecertif(all_certif.id)">supprimer</button>
+              </tr>
+            </table>
+          </ng-template>
+  -->

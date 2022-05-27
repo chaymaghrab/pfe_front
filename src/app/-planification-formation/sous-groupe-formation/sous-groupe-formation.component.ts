@@ -160,15 +160,7 @@ export class SousGroupeFormationComponent implements OnInit {
   afficher_etudiants(id: any) {
     console.log(id);
   }
-  onClick(event) {
-    console.log(event);
-    // testtt.hide=true;
-  }
-
-  onSelect({ selected }) {
-    console.log('Select Event', selected, this.selected);
-
-  }
+ 
   onSelect2({ selected2 }) {
     console.log('Select Event', selected2, this.selected2);
 
@@ -178,6 +170,15 @@ export class SousGroupeFormationComponent implements OnInit {
     console.log(this.selected3);
   }
 
+  onClick(event) {
+    console.log(event);
+    // testtt.hide=true;
+  }
+
+  onSelect({ selected }) {
+    console.log('Select Event', selected, this.selected);
+
+  }
   onActivate(event) {
     console.log('Activate Event', event);
   }

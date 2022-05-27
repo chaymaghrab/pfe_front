@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -74,5 +75,15 @@ get_grp_forma_bylocal(id:any)
 }
 
 
+get_grp_forma_byformateur(id:any)
+{
+ return this.http.get(this.url+'/'+id+'/byformateur') ;
+}
+
+get_grp_forma_byid(id:any)
+{
+  return this.http.get(this.url+'/'+id+'/find') ;
+
+}
 
 }

@@ -39,15 +39,31 @@ delete_certif(id_grp_class_certif : any )
 
 get_cours()
 {
-  return this.http.get("http://127.0.0.1:8000/api/grp_classe/cours");
+  return this.http.get(this.url+'/cours');
 
 }
 get_ecole()
 {
-  return this.http.get("http://127.0.0.1:8000/api/grp_classe/ecoles");
+  return this.http.get(this.url+'/ecoles');
 
 }
 
+get_grps_bydepartement()
+{ 
+  return this.http.get(this.url+'/bydepartement');
+}
+
+
+get_niveau_bydepartement(dep:any)
+{ 
+  return this.http.get(this.url+'/'+dep+'/bydepartement_niveau');
+}
+
+
+get_ecole_bydep_niv(dep:any,niv:any)
+{ 
+  return this.http.get(this.url+'/'+dep+'/'+niv+'/getecole');
+}
 
 
 }
