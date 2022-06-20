@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { certification } from 'app/model/certification';
 
 @Component({
   selector: 'app-add-local',
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./add-local.component.css']
 })
 export class AddLocalComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+  
+  constructor(){
+  
   }
-
+      ngOnInit() {
+          
+        
+      }
+  
 }

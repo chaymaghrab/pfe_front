@@ -25,33 +25,6 @@ export const ROUTES: RouteInfo[] = [{
         type: 'link',
         icontype: 'nc-icon nc-bank'
     },{
-        path: '/components',
-        title: 'Components',
-        type: 'sub',
-        collapse: 'components',
-        icontype: 'nc-icon nc-layout-11',
-        children: [
-            {path: 'buttons', title: 'Buttons', ab:'B'},
-            {path: 'grid', title: 'Grid System', ab:'GS'},
-            {path: 'panels', title: 'Panels', ab:'P'},
-            {path: 'sweet-alert', title: 'Sweet Alert', ab:'SA'},
-            {path: 'notifications', title: 'Notifications', ab:'N'},
-            {path: 'icons', title: 'Icons', ab:'I'},
-            {path: 'typography', title: 'Typography', ab:'T'}
-        ]
-    },{
-        path: '/forms',
-        title: 'Forms',
-        type: 'sub',
-        collapse: 'forms',
-        icontype: 'nc-icon nc-ruler-pencil',
-        children: [
-            {path: 'regular', title: 'Regular Forms', ab:'RF'},
-            {path: 'extended', title: 'Extended Forms', ab:'EF'},
-            {path: 'validation', title: 'Validation Forms', ab:'VF'},
-            {path: 'wizard', title: 'Wizard', ab:'W'}
-        ]
-    },{
         path: '/certif',
         title: 'certif',
         type: 'sub',
@@ -105,6 +78,19 @@ export const ROUTES: RouteInfo[] = [{
 
         ]
     },{
+        path: '/planing_certification',
+        title: 'planification des certifications',
+        type: 'sub',
+        collapse: 'planing_certification',
+        icontype: 'nc-icon nc-ruler-pencil',
+        children: [
+            {path: 'planification-certif', title: 'planification certifications', ab:'VF'},
+            {path: 'import-csv', title: 'importer etud certif', ab:'VF'},
+            {path: 'groupe_certif', title: 'groupe certification', ab:'VF'}
+
+
+        ]
+    },{
         path: '/local',
         title: 'local',
         type: 'sub',
@@ -113,7 +99,62 @@ export const ROUTES: RouteInfo[] = [{
         children: [
             {path: 'add', title: 'add', ab:'VF'}
         ]
+    }
+];
+
+@Component({
+    moduleId: module.id,
+    selector: 'sidebar-cmp',
+    templateUrl: 'sidebar.component.html',
+})
+
+export class SidebarComponent {
+    public menuItems: any[];
+    isNotMobileMenu(){
+        if( window.outerWidth > 991){
+            return false;
+        }
+        return true;
+    }
+
+    ngOnInit() {
+        this.menuItems = ROUTES.filter(menuItem => menuItem);
+    }
+    ngAfterViewInit(){
+    }
+}
+ /*
+ ,{
+        path: '/components',
+        title: 'Components',
+        type: 'sub',
+        collapse: 'components',
+        icontype: 'nc-icon nc-layout-11',
+        children: [
+            {path: 'buttons', title: 'Buttons', ab:'B'},
+            {path: 'grid', title: 'Grid System', ab:'GS'},
+            {path: 'panels', title: 'Panels', ab:'P'},
+            {path: 'sweet-alert', title: 'Sweet Alert', ab:'SA'},
+            {path: 'notifications', title: 'Notifications', ab:'N'},
+            {path: 'icons', title: 'Icons', ab:'I'},
+            {path: 'typography', title: 'Typography', ab:'T'}
+        ]
     },{
+        path: '/forms',
+        title: 'Forms',
+        type: 'sub',
+        collapse: 'forms',
+        icontype: 'nc-icon nc-ruler-pencil',
+        children: [
+            {path: 'regular', title: 'Regular Forms', ab:'RF'},
+            {path: 'extended', title: 'Extended Forms', ab:'EF'},
+            {path: 'validation', title: 'Validation Forms', ab:'VF'},
+            {path: 'wizard', title: 'Wizard', ab:'W'}
+        ]
+    }*/
+
+    /*
+    ,{
         path: '/tables',
         title: 'table',
         type: 'sub',
@@ -165,27 +206,4 @@ export const ROUTES: RouteInfo[] = [{
             {path: 'register', title: 'Register Page', ab:'RP'},
             {path: 'lock', title: 'Lock Screen Page', ab:'LSP'}
         ]
-    }
-];
-
-@Component({
-    moduleId: module.id,
-    selector: 'sidebar-cmp',
-    templateUrl: 'sidebar.component.html',
-})
-
-export class SidebarComponent {
-    public menuItems: any[];
-    isNotMobileMenu(){
-        if( window.outerWidth > 991){
-            return false;
-        }
-        return true;
-    }
-
-    ngOnInit() {
-        this.menuItems = ROUTES.filter(menuItem => menuItem);
-    }
-    ngAfterViewInit(){
-    }
-}
+    }*/

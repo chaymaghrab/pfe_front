@@ -1,18 +1,12 @@
 <div class="main-content">
   <div class="container-fluid">
     <div class="row">
-
-
-
-
-
-
       <div class="col-md-12">
         <div class="card">
           <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
 
-            <div class="row">
-              <div class="col-sm-auto">
+            <div class="row rowpad cen">
+              <div class="col-md-auto">
                 <mat-form-field appearance="fill">
                   <mat-label>formation</mat-label>
                   <mat-select formControlName="certification_id" required>
@@ -24,14 +18,7 @@
                 </mat-form-field>
               </div>
 
-
-
-              
-
-              
-
-
-              <div class="col-sm-auto">
+              <div class="col-md-auto">
                 <mat-form-field appearance="fill">
                   <mat-label>cours</mat-label>
                   <mat-select formControlName="cours" required>
@@ -42,9 +29,9 @@
                   </mat-select>
                 </mat-form-field>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-auto">
+              </div>
+              <div class="lang-area cen">
+                <div><label>langue : </label></div>
                 <mat-radio-group aria-label="Select an option" formControlName="langue" required>
                   <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
                   <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
@@ -52,13 +39,12 @@
                 </mat-radio-group>
               </div>
 
-            </div>
-
 
 
             
-
-            <button class="btn btn-primary" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+            <div class="pull-right">
+            <button class="btn btnrecherche" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+            </div>
           </form>
 
 
@@ -144,8 +130,13 @@
                 <strong> <a (click)="openModal(templatemodal,row)" class="btn btn-warning btn-link btn-icon btn-sm edit"><i
                       class="fa fa-edit"></i></a>
                 </strong>
+                <strong> <a (click)="initialiser(row)" class="btn btn-warning btn-link btn-icon btn-sm edit"><i
+                  class="nc-icon nc-simple-remove"></i></a>
+            </strong>
               </ng-template>
             </ngx-datatable-column>
+
+
 
           </ngx-datatable>
 

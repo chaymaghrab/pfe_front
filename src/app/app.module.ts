@@ -27,6 +27,9 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { NbThemeModule } from '@nebular/theme';
+import { TimePickerModule } from '@syncfusion/ej2-angular-calendars';
+
 
 
 @NgModule({
@@ -52,10 +55,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
         SurveillantModule,
         HttpClientModule,
         ModalModule.forRoot(),
-        
         MatFormFieldModule,
         MatInputModule
-
 
     ],
     exports:[

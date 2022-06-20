@@ -85,5 +85,9 @@ get_grp_forma_byid(id:any)
   return this.http.get(this.url+'/'+id+'/find') ;
 
 }
+get_classe_byfiltrecertif(data:any)
+{
+ return this.http.get(this.url+'/grp_classe_certif',{ params:data}) ;
+}
 
 }

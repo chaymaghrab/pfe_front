@@ -14,4 +14,16 @@ export class LocalService {
   get_locals(){
     return this.http.get(this.url+'s');
 }
+
+get_locals_bytype(type:any){
+  return this.http.get(this.url+'/'+type+'/type');
+}
+get_local_byid(id:any)
+{
+  return this.http.get(this.url+'/'+id+'/find');
+}
+get_locals_bytype_and_langue(type:any,l:any)
+{
+  return this.http.get(this.url+'/'+type+'/'+l+'/type_langue');
+}
 }

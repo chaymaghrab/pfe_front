@@ -20,6 +20,9 @@ export const AppRoutes: Routes = [{
             path: 'etudiant',
             loadChildren: './-etudiant/-etudiant.module#EtudiantModule'
         },{
+            path: 'planing_certification',
+            loadChildren: './-planification-certification/-planification-certification.module#PlanificationCertificationModule'
+        },{
             path: 'formateur',
             loadChildren: './-formateur/-formateur.module#FormateurModule'
         },{

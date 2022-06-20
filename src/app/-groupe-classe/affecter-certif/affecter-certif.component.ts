@@ -25,6 +25,13 @@ export class AffecterCertifComponent implements OnInit {
   @ViewChild('myTable2') table2: any;
 
 
+  public grpclasse: {
+    departement: string;
+    niveau: number;
+    ecole: string;
+    certif_id:number;
+  }
+
   allgroupe_classes: any = [];
   all_certif: any = []
   grp_certif: any = [];
@@ -37,6 +44,8 @@ export class AffecterCertifComponent implements OnInit {
   cherchergroupe: FormGroup | any;
   selected = [];
   selected2 = [];
+  selected3 = [];
+  certif_grp_aff:any=[];
 
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
@@ -57,14 +66,38 @@ export class AffecterCertifComponent implements OnInit {
   ngOnInit(): void {
 
     this.cherchergroupe = this.fb.group({
-      certification_id: [3, [Validators.required]],
+      certification_id: [, [Validators.required]],
 
+    });
+
+    this.service_groupeclasse.get_distinct().subscribe((data)=>{
+      this.allgroupe_classes=data;
+      this.allgroupe_classes = [...this.allgroupe_classes];
+      this.selected = [this.allgroupe_classes[0]];
+    });
+
+    this.service_certif.get_certifications().subscribe((data) => {
+      console.log(data);
+      this.all_certif = data;
+    });
+
+    this.refrech_grp_forma();
+
+    this.cherchergroupe.get("certification_id").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({ certification_id: x, }, { onlySelf: true, emitEvent: false });
+      this.refrech_grp_forma();
     });
 
     /*this.service_groupeclasse.get_groupe_classes().subscribe((data)=>{
      // console.log(data);
       this.allgroupe_classes=data;
      });*/
+/*
+this.refrech_grp_forma();
+   
+    this.addnbheure = {
+      test: '',
+    }
 
 
     this.service_groupeclasse.get_grps_bydepartement().subscribe((data: any) => {
@@ -94,16 +127,7 @@ export class AffecterCertifComponent implements OnInit {
         });
       });
     });
-
-
-    this.service_certif.get_certifications().subscribe((data) => {
-      console.log(data);
-      this.all_certif = data;
-    });
-    this.addnbheure = {
-      test: '',
-    }
-
+*/
   }
 
   onClick(event) {
@@ -119,6 +143,10 @@ export class AffecterCertifComponent implements OnInit {
     console.log('Select Event', selected2, this.selected2);
 
   }
+  onSelect3({ selected3 }) {
+    console.log('Select Event', selected3, this.selected3);
+
+  }
   onActivate(event) {
     console.log('Activate Event', event);
   }
@@ -129,7 +157,7 @@ export class AffecterCertifComponent implements OnInit {
     this.idgrp = id;
   }
 
-  openModal2(template: TemplateRef<any>, id?: any) {
+  /*openModal2(template: TemplateRef<any>, id?: any) {
     this.nom_formations = [];
     this.service_groupeclasse.get_all_certifs(id).subscribe((data) => {
       this.all_certif_id = data;
@@ -141,7 +169,7 @@ export class AffecterCertifComponent implements OnInit {
     });
     this.modalRef = this.modalService.show(template);
 
-  }
+  }*/
   certif_add(model: addnbheure, isValid: boolean) {
     if (isValid) {
       let id_certif = <HTMLInputElement>document.getElementById('certifid');
@@ -150,7 +178,7 @@ export class AffecterCertifComponent implements OnInit {
 
       this.data = [semestre.value, nbheure.value];
       console.log(id_certif.value);
-      this.service_groupeclasse.affecter_certif(this.idgrp, id_certif.value, this.data).subscribe((result) => {
+      this.service_groupeclasse.affecter_certif(this.idgrp, id_certif.value).subscribe((result) => {
         console.log(result);
         if (result == 'no') {
           Swal.fire({
@@ -182,7 +210,38 @@ export class AffecterCertifComponent implements OnInit {
       });
   }
   recherche_grp() {
-    console.log(this.allgroupe_classes);
+    this.service_groupeclasse.get_grp_certif_saved().subscribe((data: any) => {
+      })
+/*this.allgroupe_classes=[];
+
+    this.service_groupeclasse.get_grps_bydepartement().subscribe((data: any) => {
+      data.forEach(element => {
+
+
+        this.service_groupeclasse.get_niveau_bydepartement(element.departement).subscribe((da: any) => {
+
+          da.forEach((el: any) => {
+
+            this.service_groupeclasse.get_ecole_bydep_niv(element.departement, el.niveau).subscribe((d: any) => {
+              d.forEach((elem: any) => {
+                this.dep_niv = []
+                this.dep_niv['departement'] = element.departement;
+                this.dep_niv['niveau'] = el.niveau;
+                this.dep_niv['ecole'] = elem.ecole;
+                this.allgroupe_classes.push(this.dep_niv);
+              });
+              this.allgroupe_classes = [...this.allgroupe_classes];
+              this.selected = [this.allgroupe_classes[0]];
+
+            });
+
+          });
+
+        });
+      });
+    });
+*/
+
   }
 
 
@@ -220,6 +279,110 @@ export class AffecterCertifComponent implements OnInit {
     else {
       console.log(this.grp_certif);
     }
+  }
+  
+  affecter() {
+    if (this.grp_certif.length != 0) {
+
+      this.grp_certif.forEach(element => {
+        
+    
+        this.grpclasse= {
+          departement: element.departement,
+          niveau: element.niveau,
+          ecole: element.ecole,
+        certif_id:this.cherchergroupe.value.certification_id
+        }
+        //console.log(this.cherchergroupe.value.certification_id);
+        this.service_groupeclasse.getgrp_byfilre(this.grpclasse).subscribe((del: any) => {
+        console.log(del);
+        });
+        //this.refrech_grp_forma();
+
+      });
+    }
+    this.refrech_grp_forma();
+  }
+
+  refrech_grp_forma() {
+    this.grp_certif=[];
+    this.certif_grp_aff=[];
+    this.service_groupeclasse.get_grp_certif_distinct(this.cherchergroupe.value.certification_id).subscribe((d: any) => {
+      this.certif_grp_aff=d;
+      console.log(d);
+      this.certif_grp_aff = [...this.certif_grp_aff];
+          this.selected3 = [this.certif_grp_aff[0]];
+     /* this.certif_grp_aff = [...this.certif_grp_aff];
+      this.selected3 = [this.certif_grp_aff[0]];*/
+    });
+    
+/*    this.service_groupeclasse.get_allgep_affecter().subscribe((d: any) => {
+      d.forEach((element:any) => {
+        this.service_groupeclasse.find_groupe_classe(element.grp_classe_id).subscribe((data: any) => {
+        
+        if(this.certif_grp_aff.length==0)
+        {
+          this.dep_niv = []
+          this.dep_niv['departement'] = data.departement;
+          this.dep_niv['niveau'] = data.niveau;
+          this.dep_niv['ecole'] = data.ecole;
+          this.dep_niv['certif'] = element.certif_id;
+          this.certif_grp_aff.push(this.dep_niv);
+          this.certif_grp_aff = [...this.certif_grp_aff];
+          this.selected3 = [this.certif_grp_aff[0]];
+
+        }
+        else{
+          var b=true;
+          this.certif_grp_aff.forEach((ele:any) => {
+            if(ele.departement==data.departement&&ele.niveau==data.niveau&&ele.ecole==data.ecole && ele.certif==element.certif_id)
+            {
+              b=false;
+            }
+          });
+          if(b==true)
+          {
+            this.dep_niv = []
+            this.dep_niv['departement'] = data.departement;
+            this.dep_niv['niveau'] = data.niveau;
+            this.dep_niv['ecole'] = data.ecole;
+            this.dep_niv['certif'] =element.certif_id;
+            this.certif_grp_aff.push(this.dep_niv);
+            this.certif_grp_aff = [...this.certif_grp_aff];
+            this.selected3 = [this.certif_grp_aff[0]];
+console.log(this.certif_grp_aff);
+          }
+        }
+        
+        });
+      });
+    });*/
+    
+  }
+
+  save()
+  {if(this.certif_grp_aff!=0)
+    {
+      this.certif_grp_aff.forEach(element => {
+        
+    
+      this.grpclasse= {
+        departement: element.departement,
+        niveau: element.niveau,
+        ecole: element.ecole,
+        certif_id:this.cherchergroupe.value.certification_id
+
+      }
+      //console.log(this.cherchergroupe.value.certification_id);
+      this.service_groupeclasse.getgrp_byfilre(this.grpclasse).subscribe((del: any) => {
+        del.forEach((ele:any) => {
+          this.service_groupeclasse.affecter_certif(ele.id,element['certif']).subscribe((del: any) => {
+          });
+        });
+      });
+    });
+    }
+
   }
 
 }

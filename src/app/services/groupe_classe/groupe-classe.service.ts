@@ -23,14 +23,14 @@ find_groupe_classe(id:any){
 }
 
 
-affecter_certif(id_groupe:any ,id_certif:any ,data:any)
+affecter_certif(id_groupe:any ,id_certif:any)
 {
-  return this.http.post(this.url2+'/'+id_groupe+'/'+id_certif+'/affecter',data);
+  return this.http.post(this.url2+'/'+id_groupe+'/'+id_certif+'/affecter',null);
 }
 
-get_all_certifs(id_grp:any)
+isaffected(id_grp:any,idcertif:any)
 {
-  return this.http.get(this.url2+'/'+id_grp+"/get_certifs");
+  return this.http.get(this.url2+'/'+id_grp+'/'+idcertif+"/isaffected");
 }
 delete_certif(id_grp_class_certif : any )
 {
@@ -47,12 +47,23 @@ get_ecole()
   return this.http.get(this.url+'/ecoles');
 
 }
-
+get_departement()
+{
+  return this.http.get(this.url+'/departement');
+}
+get_niveau()
+{
+  return this.http.get(this.url+'/niveau');
+}
 get_grps_bydepartement()
 { 
   return this.http.get(this.url+'/bydepartement');
 }
 
+grp_filtrecertif()
+{ 
+  return this.http.get(this.url+'/filtrecertif');
+}
 
 get_niveau_bydepartement(dep:any)
 { 
@@ -65,6 +76,37 @@ get_ecole_bydep_niv(dep:any,niv:any)
   return this.http.get(this.url+'/'+dep+'/'+niv+'/getecole');
 }
 
+get_gep_affecter_bycertif(certif_id:any)
+{
+  return this.http.get(this.url2+'/'+certif_id+'/getgrp_certif');
+
+}
+get_allgep_affecter()
+{
+  return this.http.get(this.url2+'s');
+
+}
+
+getgrp_byfilre(data:any)
+{
+  return this.http.get(this.url+'/get_grp_filtre',{ params:data});
+
+}
+get_distinct()
+{
+  return this.http.get(this.url+'/get_grp_distinct');
+}
+
+get_grp_certif_saved()
+{
+  return this.http.get(this.url2+'/get_grp_certif_distinct');
+}
+
+
+get_grp_certif_distinct(certif_id:any)
+{
+  return this.http.get(this.url+'/'+certif_id+'/get_grpaff_distinct');
+}
 
 }
 

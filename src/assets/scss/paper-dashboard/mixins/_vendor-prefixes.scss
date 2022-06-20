@@ -14,7 +14,7 @@
 
 @mixin sidebar-color($color){
   &:after{
-    background: $color;
+    background: #30A8BA;
   }
 }
 
@@ -36,7 +36,7 @@
           &.active > a[data-toggle="collapse"] i,
           &.active > a[data-toggle="collapse"] ~ div > ul > li.active .sidebar-mini-icon,
           &.active > a[data-toggle="collapse"] ~ div > ul > li.active > a {
-            color: $font-color;
+            color: #FDC04E;
             opacity: 1;
           }
         }

@@ -267,7 +267,16 @@ export class SousGroupeFormationComponent implements OnInit {
 
   down() {
     if (this.sous_groupe_classe.length != 0) {
-      this.sous_groupe_classe['name'] = String.fromCharCode(this.indice_groupe);
+      var n=(<HTMLInputElement>document.getElementById('nomgrp')).value;
+      var c=(<HTMLInputElement>document.getElementById('cer_id')).textContent;
+      var t=true;
+      this.groupe_forma.forEach((element:any) => {
+        if(element.name==n+'/'+c)
+        t=false;
+      });
+      if(n!=''&& t==true)
+      {
+      this.sous_groupe_classe['name'] = n+'/'+c;
       this.sous_groupe_classe['certif'] = this.cherchergroupe.value.certification_id;
       this.sous_groupe_classe['langue'] = this.cherchergroupe.value.langue;
       this.sous_groupe_classe['cours'] = this.cherchergroupe.value.cours;
@@ -281,14 +290,16 @@ export class SousGroupeFormationComponent implements OnInit {
       this.sous_groupe_classe = [...this.sous_groupe_classe];
       this.taillesousgroupe = 0;
       console.log(this.groupe_forma);
+     
     }
+  }
     else {
       console.log('non');
     }
 
   }
   up(row: any) {
-    // console.log(this.groupe_forma);
+     console.log(row);
     if (this.groupe_forma.length != 0) {
       Swal.fire({
         title: 'Are you sure?',
@@ -301,18 +312,22 @@ export class SousGroupeFormationComponent implements OnInit {
         buttonsStyling: false
       }).then((result) => {
         if (result.value) {
-          let x = this.table3.bodyComponent.getRowIndex(row);
-          this.groupe_forma.splice(x, 1);
+          
           // this.groupe_forma = [...this.groupe_forma];
           // console.log(this.groupe_forma);
 
-          this.selected3 = [this.groupe_forma[0]];
           row.forEach(element => {
             this.sous_groupe_classe.push(element);
             this.sous_grp_length(element, 'add');
           });
           this.sous_groupe_classe = [...this.sous_groupe_classe];
           this.selected2 = [this.sous_groupe_classe[0]];
+          let x = this.table3.bodyComponent.getRowIndex(row);
+          console.log(x);
+          this.groupe_forma.splice(x, 1);
+          this.groupe_forma = [...this.groupe_forma];
+          this.selected3 = [this.groupe_forma[0]];
+
         }
       });
     }
@@ -347,19 +362,29 @@ export class SousGroupeFormationComponent implements OnInit {
   save_grp_forma() {
     
     this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((rs: any) => {
+      var b=true;
+      rs.forEach(e => {
+        if(e.local_id!=null)
+        b=false;
+
+      });
+
+      if(b==true)
+      {
       rs.forEach(rs_elem => {
         this.service_grp_formation.delete_grp_forma(rs_elem.id).subscribe(resul=>
         {
           console.log(resul);
         })
       });
+      console.log(this.groupe_forma);
 
-    this.groupe_forma.forEach(element => {
+    this.groupe_forma.forEach((element:any) => {
       this.grp_forma_add = {
         nom_groupe_forma: element.name,
-        certification_id: element.certif,
-        langue: element.langue,
-        cours: element.cours,
+        certification_id: this.cherchergroupe.value.certification_id,
+        langue: this.cherchergroupe.value.langue,
+        cours: this.cherchergroupe.value.cours,
         effectif: element.effectif
       }
       console.log(this.grp_forma_add);
@@ -378,6 +403,18 @@ export class SousGroupeFormationComponent implements OnInit {
       });
 
     });
+
+  }
+  else {
+    Swal.fire({
+        title: 'Cancelled',
+        text: 'Your imaginary file is safe :)',
+        type: 'error',
+        confirmButtonClass: "btn btn-info",
+        buttonsStyling: false
+    })
+  }
+
   });
 
   }
@@ -385,7 +422,8 @@ export class SousGroupeFormationComponent implements OnInit {
     this.groupe_forma = [];
     this.rows = [];
     this.sous_groupe_classe = [];
-    this.taillesousgroupe = 0;    this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
+    this.taillesousgroupe = 0;  
+      this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
       console.log(this.cherchergroupe.value);
       data.forEach((element: any) => {
         //this.grp_forma_test['name']=element.nom_groupe_forma;

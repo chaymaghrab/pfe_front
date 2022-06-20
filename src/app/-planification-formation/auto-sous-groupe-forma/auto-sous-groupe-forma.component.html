@@ -5,11 +5,11 @@
                 <div class="card">
                     <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
 
-                        <div class="row">
-                            <div class="col-sm-auto">
+                        <div class="row  rowpad cen">
+                            <div class="col-md-auto">
                                 <mat-form-field appearance="fill">
                                     <mat-label>formation</mat-label>
-                                    <mat-select formControlName="certification_id" required>
+                                    <mat-select formControlName="certification_id" id="cer_id" required>
                                         <mat-option>--</mat-option>
                                         <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
                                             {{cer.nom_formation}}
@@ -21,10 +21,10 @@
                            
 
 
-                            <div class="col-sm-auto">
+                            <div class="col-md-auto">
                                 <mat-form-field appearance="fill">
                                     <mat-label>cours</mat-label>
-                                    <mat-select formControlName="cours" required>
+                                    <mat-select formControlName="cours" id="cou_id" required>
                                         <mat-option>--</mat-option>
                                         <mat-option *ngFor="let cours of all_cours" [value]="cours.cours">
                                             {{cours.cours}}
@@ -32,9 +32,8 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-auto">
+                        
+                            <div class="col-md-auto">
                                 <mat-form-field appearance="fill">
                                     <mat-label>ecole</mat-label>
                                     <mat-select formControlName="ecole" required>
@@ -46,8 +45,9 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                            <div class="col-sm-auto">
-                                <mat-radio-group aria-label="Select an option" formControlName="langue" required>
+                            <div class="lang-area cen">
+                              <div><label>langue : </label></div>
+                                <mat-radio-group aria-label="Select an option" formControlName="langue"  required>
                                     <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
                                     <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
                                     <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
@@ -56,9 +56,10 @@
                             </div>
 
                         </div>
-
+                        <div class="pull-right">
                         <button class="btn btn-primary" type="submit"
                             [disabled]=!cherchergroupe.valid>rechercher</button>
+                            </div>
                     </form>
 
 
@@ -67,7 +68,7 @@
                 </div>
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-8">
                 <div class="card">
                     <ngx-datatable #myTable class="material" [rows]="rows" [columnMode]="ColumnMode.force"
                         [headerHeight]="50
@@ -96,18 +97,21 @@
 
 
                     </ngx-datatable>
-                    <p>{{taillesousgroupe}}</p>
+                    <span>Total : {{taillesousgroupe}}</span>
 
                 </div>
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <form [formGroup]="groupeforma" (ngSubmit)="creergroupe()">
-                    <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-form-field class="example-full-width elemcen" appearance="fill">
                         <mat-label>nombre d'etudiant par classes</mat-label>
                         <input type="number" formControlName="nbetud" required matInput placeholder="Ex. 30">
                     </mat-form-field>
-                    <button class="btn btn-primary" type="submit" [disabled]=!groupeforma.valid>créer</button>
+                    <br>
+                    <div class="elemcen">
+                    <button class="btn  ntlist" type="submit" [disabled]=!groupeforma.valid>créer</button>
+                  </div>
                 </form>
             </div>
 
@@ -162,7 +166,7 @@
                     </ngx-datatable-column>
                     <ngx-datatable-column name="nom_groupe" [width]="80">
                       <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        <strong>groupe {{ row.name}}</strong>
+                        <strong> {{ row.name}}</strong>
                       </ng-template>
                     </ngx-datatable-column>
                     <ngx-datatable-column name="composer de" [width]="80">
@@ -176,7 +180,7 @@
         
         
                 </div>
-                <button class="btn" (click)="save_grp_forma()"> enregister </button><br>
+                <button class="btn  ntlist" (click)="save_grp_forma()"> enregister </button><br>
               </div>
 
 

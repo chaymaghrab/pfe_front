@@ -1,0 +1,56 @@
+
+  .btn {
+    background-color: #FDC04E;
+  
+}
+.btn.ntlist{
+  width:170px;
+}
+.btn.btnrecherche{
+  margin-block-end: auto;
+}
+.row.rowpad{
+  padding-top: 20px;
+}
+.pull-right{
+  margin-right: 50px;
+  padding-bottom: 10px;
+}
+.cen{
+  justify-content: center;
+}
+
+.inputnomgrp-group {
+  align-items: center;
+  margin-left: 30px;
+}
+
+.inputnomgrp-group .inputnomgrp {
+  margin: 0 7px 0 0;
+}
+
+.inputnomgrp-group .inputnomgrp input {
+  height: 37px;
+}
+.row.rowpad .col-md-auto {
+  padding-right: 35px;
+  padding-left: 35px;
+}
+.lang-area {
+  display: flex;
+  align-items: center;
+}
+.lang-area label {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 10px 0 0;
+  color: #66615B;
+}
+.btn.updow
+{
+  width: 90px;
+}
+.elemcen{
+  justify-content: center;
+  display: flex;
+}

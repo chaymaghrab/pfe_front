@@ -17,7 +17,6 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <button class="btn btn-primary" type="submit">rechercher</button>
           </form>
         </div>
       </div>
@@ -91,14 +90,47 @@
 
 
         </div>
-
-
-
-
-
-
-
+        <button class="btn" (click)="affecter()"> affecter</button><br>
       </div>
+
+
+      <div class="col-md-12">
+        <div class="card">
+
+
+          <ngx-datatable #myTable3 class="material" [rows]="certif_grp_aff" [columnMode]="ColumnMode.force"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected3"
+            [selectionType]="SelectionType.single" (select)='onSelect3($event)'>
+
+            <ngx-datatable-column name="departement" prop="departement">
+              <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                {{row.departement}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="niveau" prop="niveau">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{row.niveau}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="ecole" prop="ecole">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{row.ecole}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="certif" prop="certif">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{row.certif}}
+              </ng-template>
+            </ngx-datatable-column>
+
+
+          </ngx-datatable>
+        </div>
+        
+      </div>
+
+
 
     </div>
   </div>

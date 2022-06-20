@@ -1,0 +1,227 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
+  
+              <div class="row rowpad cen">
+                <div class="col-md-auto">
+                  <mat-form-field appearance="fill">
+                    <mat-label>formation</mat-label>
+                    <mat-select formControlName="certification_id" required>
+                      <mat-option>--</mat-option>
+                      <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
+                        {{cer.nom_formation}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+  
+                <div class="col-md-auto">
+                  <mat-form-field appearance="fill">
+                    <mat-label>cours</mat-label>
+                    <mat-select formControlName="cours" required>
+                      <mat-option>--</mat-option>
+                      <mat-option *ngFor="let cours of all_cours" [value]="cours.cours">
+                        {{cours.cours}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                </div>
+                <div class="lang-area cen">
+                  <div><label>langue : </label></div>
+                  <mat-radio-group aria-label="Select an option" formControlName="langue" required>
+                    <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                    <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                    <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+  
+  
+  
+              
+              <div class="pull-right">
+              <button class="btn btnrecherche" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+              </div>
+            </form>
+  
+  
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="card">
+  
+            <ngx-datatable #myTable class="material" [rows]="groupe_certif" [columnMode]="ColumnMode.force"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected"
+              [selectionType]="SelectionType.single" (select)='onSelect($event)'>
+  
+  
+              <ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow (toggle)="onDetailToggle($event)">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                  <div style="padding-left:35px;">
+                    <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                      <th>
+                        nom 
+                      </th>
+                      <th>
+                       prenom
+                      </th>
+                      <th>
+                        matricule
+                      </th>
+                      <tr *ngFor="let item of row">
+                        <td>{{ item.user[0].nom }}</td>
+                        <td>{{ item.user[0].prenom }}</td>
+                        <td>{{ item.matricule }}</td>
+                      </tr>
+                    </table>
+  
+                  </div>
+                </ng-template>
+              </ngx-datatable-row-detail>
+  
+              <ngx-datatable-column [width]="50" [resizeable]="false" [sortable]="false" [draggable]="false"
+                [canAutoResize]="false">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <a href="javascript:void(0)" [class.datatable-icon-right]="!expanded"
+                    [class.datatable-icon-down]="expanded" title="Expand/Collapse Row" (click)="toggleExpandRow(row)">
+                  </a>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Index" [width]="80">
+                <ng-template let-rowIndex="rowIndex" let-row="row" ngx-datatable-cell-template>
+                  <strong>{{ rowIndex }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="name" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong> {{ row.name }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="effectif" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.effectif }} </strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="salle" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.salle }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="surv1" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.surv1 }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="surv2" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.surv2 }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="date" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.date }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="debut" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.heuredeb }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="fin" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong>{{ row.heurefin }}</strong>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="" [width]="80">
+                <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                  <strong> <a (click)="openModal(templatemodal,row)" class="btn btn-warning btn-link btn-icon btn-sm edit"><i
+                        class="fa fa-edit"></i></a>
+                  </strong>
+                  <strong> <a (click)="initialiser(row)" class="btn btn-warning btn-link btn-icon btn-sm edit"><i
+                    class="nc-icon nc-simple-remove"></i></a>
+              </strong>
+                </ng-template>
+              </ngx-datatable-column>
+  
+  
+  
+            </ngx-datatable>
+  
+  
+  
+          </div>
+          <button class="btn" (click)="save_grp_certif()"> enregister </button><br>
+        </div>
+  
+  
+  
+      </div>
+  
+  
+      <ng-template #templatemodal>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">planification</h4>
+          <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div><br>
+  
+              <form [formGroup]="planifier_certif" (ngSubmit)="planifier_certification()">
+  
+                <div class="row">
+               
+  
+                  <div class="col-sm-auto">
+                    <select formControlName="local_id" required>
+                      <option *ngFor="let l of local"  [value]="l.id"> {{l.nom}}</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-auto">
+                    <select formControlName="surv1_id" id="sruv" required>
+                      <option *ngFor="let f of ensg" [value]="f.id"> {{f.user[0].nom}}{{f.user[0].prenom}}</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-auto">
+                    <select formControlName="surv2_id" required>
+                      <option *ngFor="let f of ensg" [value]="f.id"> {{f.user[0].nom}}{{f.user[0].prenom}}</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-auto">
+
+                  <timepicker formControlName="timedeb" (click)="changeMyTime()"></timepicker>
+                  </div>
+                  <div class="col-sm-auto">
+
+                  <timepicker formControlName="timefin" (click)="changeMyTime()"></timepicker> 
+</div>
+
+<div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3">
+  <input class="form-control"
+         placeholder="Datepicker"
+         formControlName="date"
+         bsDatepicker
+         [minDate]="minDate"
+         [maxDate]="maxDate">
+</div>
+
+              
+                </div>
+                
+                <button class="btn btn-primary" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+              </form>
+
+              
+<timepicker [(ngModel)]="mytimef"></timepicker>
+
+
+            </ng-template>
+  
+  
+  
+  
+  
+    </div>
+  </div>

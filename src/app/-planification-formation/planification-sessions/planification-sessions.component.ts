@@ -28,13 +28,13 @@ export class PlanificationSessionsComponent implements OnInit {
     local_id: number;
   }
 
-  
+
 
   public add_seance_forma: {
     datedeb: string;
     datefin: string;
     type: string;
-    groupe_formation_id:number;
+    groupe_formation_id: number;
   }
 
   datechoisie: any = [];
@@ -59,12 +59,15 @@ export class PlanificationSessionsComponent implements OnInit {
 
   rowselected: any = [];
   rowindex: any;
-   b_salle: Boolean;
-   b_formateur: Boolean;
+  b_salle: Boolean;
+  b_formateur: Boolean;
 
-  grp_form_ids:any=[];
-formateur_ids:any=[];
- testchay:any=[];
+  b_salle_base: Boolean;
+  b_formateur_base: Boolean;
+
+  grp_form_ids: any = [];
+  formateur_ids: any = [];
+  testchay: any = [];
 
   constructor(private service_certif: CertificationService,
     private service_grp_formation: GroupeFormationService,
@@ -73,7 +76,7 @@ formateur_ids:any=[];
     private service_classe: GroupeClasseService,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private service_seance:SeanceService
+    private service_seance: SeanceService
   ) {
     this.minDate = new Date();
     this.maxDate = new Date();
@@ -84,17 +87,19 @@ formateur_ids:any=[];
 
   ngOnInit(): void {
     this.cherchergroupe = this.fb.group({
-      certification_id: [3, [Validators.required]],
+      certification_id: [, [Validators.required]],
       cours: ['jour', [Validators.required]],
       langue: ['Français', [Validators.required]],
 
     });
+
     this.planifier_forma = this.fb.group({
-      local_id: [0, [Validators.required]],
-      formateur_id: [0, [Validators.required]],
+      local_id: [, [Validators.required]],
+      formateur_id: [, [Validators.required]],
       date: ['', [Validators.required]],
 
     });
+
 
     this.service_certif.get_certifications().subscribe((data) => {
       console.log(data);
@@ -107,16 +112,27 @@ formateur_ids:any=[];
       this.all_cours = data;
     });
 
-    this.service_local.get_locals().subscribe((data) => {
-      console.log(data);
-      this.local = data;
-    });
 
     this.service_formateur.get_formateurs().subscribe((data) => {
       console.log(data);
       this.formateur = data;
     });
 
+    this.cherchergroupe.get("certification_id").valueChanges.subscribe(x => {
+      this.cherchergroupe.patchValue({ certification_id: x, }, { onlySelf: true, emitEvent: false });
+
+      console.log(this.cherchergroupe.value.certification_id);
+
+      this.service_certif.get_certifById(this.cherchergroupe.value.certification_id).subscribe((data: any) => {
+        this.service_local.get_locals_bytype(data.type_examan).subscribe((d: any) => {
+          this.local = d;
+          console.log(d);
+        });
+      });
+
+
+
+    });
 
   }
 
@@ -156,9 +172,8 @@ formateur_ids:any=[];
 
   openModal(template: TemplateRef<any>, row?: any) {
 
-    this.modalRef = this.modalService.show(template);
-    this.rowselected = row;
-    //this.rowindex=this.table.bodyComponent.getRowIndex(this.rowselected);
+
+
     this.planifier_forma = this.fb.group({
       local_id: [, [Validators.required]],
       formateur_id: [, [Validators.required]],
@@ -166,15 +181,23 @@ formateur_ids:any=[];
 
     });
 
+    this.modalRef = this.modalService.show(template);
+    this.rowselected = row;
+    //this.rowindex=this.table.bodyComponent.getRowIndex(this.rowselected);
+
+
+
+
+
   }
 
   recherche_grp() {
-   
+
     //console.log(this.cherchergroupe.value);
     this.service_grp_formation.get_grp_forma_byfiltre(this.cherchergroupe.value).subscribe((data: any) => {
       this.groupe_forma = [];
-      console.log( this.groupe_forma);
-       console.log(data);
+      console.log(this.groupe_forma);
+      console.log(data);
       //this.groupe_forma = data;
       data.forEach((element: any) => {
         this.service_grp_formation.get_sous_grp(element.id).subscribe((res: any) => {
@@ -184,22 +207,25 @@ formateur_ids:any=[];
           res['effectif'] = element.effectif;
           res['salle'] = element.local_id;
           res['formateur'] = element.formateur_id;
-          
-          
+          res['datedeb'] = '';
+          res['datefin'] = '';
+
           this.service_seance.get_seance(element.id).subscribe((resul: any) => {
-            res['datedeb'] = resul.datedeb;
-            res['datefin'] = resul.datefin;
+            if (resul != null) {
+              res['datedeb'] = resul.datedeb;
+              res['datefin'] = resul.datefin;
+            }
           });
 
           this.groupe_forma.push(res);
           // console.log( this.groupe_forma);
-          
+
           this.groupe_forma = [...this.groupe_forma];
           this.selected = [this.groupe_forma[0]];
         });
       });
     });
-    
+
 
   }
 
@@ -217,11 +243,14 @@ formateur_ids:any=[];
   }
   planifier_formation() {
     this.b_salle = true;
-    this.b_formateur= true;
+    this.b_formateur = true;
+    this.b_salle_base = true;
+    this.b_formateur_base = true;
     var i = 0;
-    this.grp_form_ids=[];
-    this.formateur_ids=[];
+    this.grp_form_ids = [];
+    this.formateur_ids = [];
     let nv_local = this.planifier_forma.value.local_id;
+
     let nv_formateur = this.planifier_forma.value.formateur_id;
     let nv_date = this.getdate(this.planifier_forma.value.date);
 
@@ -229,11 +258,15 @@ formateur_ids:any=[];
 
     var datefin = new Date(nv_date[1]);
 
+    this.service_local.get_local_byid(nv_local).subscribe((dt: any) => {
+
+     
     //let listdate=this.getdate(this.planifier_forma.value.date);
     //console.log(listdate);
-
+if(dt.capacite>this.rowselected.effectif)
     // console.log(dateOne)
-
+{
+ 
     //console.log(this.groupe_forma[i]['salle']=='ss');
     while (this.b_salle && this.b_formateur && i < this.groupe_forma.length) {
 
@@ -241,150 +274,313 @@ formateur_ids:any=[];
         let dateOne = new Date(this.groupe_forma[i]['datedeb']);
         let datetwo = new Date(this.groupe_forma[i]['datefin']);
         if (this.groupe_forma[i]['salle'] == nv_local) {
-          if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)) {
-            this.b_salle= false;
+          if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)||(datedeb <=dateOne && datefin >= datetwo)) {
+            this.b_salle = false;
           }
         }
         if (this.groupe_forma[i]['formateur'] == nv_formateur) {
-          if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)) {
+          if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)||(datedeb <=dateOne && datefin >= datetwo)) {
             this.b_formateur = false;
           }
         }
       }
       i++;
     }
-    
-   
-    /*this.service_grp_formation.get_grp_forma_bylocal(nv_local).subscribe((d: any) => {
-    
-      d.forEach((elt:any) => {
-       this.grp_form_ids.push(elt.id);
-      });
 
-      this.service_seance.get_seance_by_list_grps_id(this.grp_form_ids).subscribe((res: any) => {
 
-        console.log(res);
-        if(res.length!=0)
-        {
-
-          this.testchay=['aaaaaa'];
-          //this.testchay=[...this.testchay];
-          while(this.b_salle)
-          {
-          res.forEach(element => {
-            
-            let dateOne = new Date(element.datedeb);
-            let datetwo = new Date(element.datefin);
-            //console.log(dateOne);
-            if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)) {
-              this.b_salle= false;
-              console.log('aaaaa')
-            }
-
-          });
-        }
-         // this.b_salle= false;
-        }
-               });
-    });*/
-
-  /*  this.service_grp_formation.get_grp_forma_byformateur(nv_formateur).subscribe((d: any) => {
-    
-      d.forEach((elt:any) => {
-       this.formateur_ids.push(elt.id);
-      });
-
-      this.service_seance.get_seance_by_list_grps_id(this.formateur_ids).subscribe((res: any) => {
-
-        console.log(res);
-        if(res.length==0)
-        {
-          this.b_formateur= false;
-        }
-               });
-    });
-*/
     if (this.b_salle && this.b_formateur) {
-      this.rowselected['salle'] = nv_local;
-      this.rowselected['formateur'] = nv_formateur;
-      this.rowselected['datedeb'] = (this.getdate(this.planifier_forma.value.date))[0];
-      this.rowselected['datefin'] = (this.getdate(this.planifier_forma.value.date))[1];
-     
 
-     
-      this.modalRef.hide();
+      this.service_grp_formation.get_grp_forma_bylocal(nv_local).subscribe((d: any) => {
+        this.grp_form_ids = [];
+        d.forEach((elt: any) => {
+          this.grp_form_ids.push(elt.id);
+        });
+
+        this.service_seance.get_seance_by_list_grps_id(this.grp_form_ids).subscribe((element: any) => {
+
+          console.log(element);
+          var h = 0;
+          if (element.length != 0) {
+
+            while (this.b_salle_base && h < element.length) {
+              var nomgrp: any;
+
+              let dateOne = new Date(element[h].datedeb);
+              let datetwo = new Date(element[h].datefin);
+              //console.log(dateOne);
+              console.log(this.cherchergroupe.value.cours)
+             
+              if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)||(datedeb <=dateOne && datefin >= datetwo)) {
+                
+                if(this.cherchergroupe.value.cours=="aménagée")
+                {
+                  if(element[h].type=="aménagée")
+                    {this.b_salle_base = false;
+                    nomgrp = element[h].groupe_formation_id;
+                    }
+                }
+                else
+                {
+                  if(element[h].type=="jour"||element[h].type=="alternance")
+                  {
+                    this.b_salle_base = false;
+                    nomgrp = element[h].groupe_formation_id;
+                  }
+                }
+                
+              }
+
+
+              h++
+
+            }
+         
+          }
+          if (this.b_salle_base == true) {
+
+            this.service_grp_formation.get_grp_forma_byformateur(nv_formateur).subscribe((de: any) => {
+              this.grp_form_ids = [];
+              de.forEach((elte: any) => {
+                this.grp_form_ids.push(elte.id);
+              });
+
+              this.service_seance.get_seance_by_list_grps_id(this.grp_form_ids).subscribe((element1: any) => {
+
+                var g = 0;
+                if (element1.length != 0) {
+
+                  while (this.b_formateur_base && g < element1.length) {
+                    var nomgrp1: any;
+
+                    let dateOne = new Date(element1[g].datedeb);
+                    let datetwo = new Date(element1[g].datefin);
+                    //console.log(dateOne);
+                    if ((datedeb >= dateOne && datedeb <= datetwo) || (datefin >= dateOne && datefin <= datetwo)||(datedeb <=dateOne && datefin >= datetwo)) {
+                        
+                if(this.cherchergroupe.value.cours=="aménagée")
+                {
+                  if(element1[g].type=="aménagée")
+                      {
+                      this.b_formateur_base = false;
+                      nomgrp1 = element1[g].groupe_formation_id;
+                      }
+                }
+                else
+                {
+                  if(element1[g].type=="jour"||element1[g].type=="alternance")
+                  {
+                    this.b_formateur_base = false;
+                      nomgrp1 = element1[g].groupe_formation_id;
+                  }
+                }
+                
+
+
+                      //console.log('aaaaa');
+                      // console.log(this.b_salle_base);
+                    }
+                    g++
+
+                  }
+                }
+                if (this.b_formateur_base == true) {
+
+
+                  this.rowselected['salle'] = nv_local;
+                  this.rowselected['formateur'] = nv_formateur;
+                  this.rowselected['datedeb'] = (this.getdate(this.planifier_forma.value.date))[0];
+                  this.rowselected['datefin'] = (this.getdate(this.planifier_forma.value.date))[1];
+
+
+
+                  this.modalRef.hide();
+
+                }
+                else {
+                  this.service_grp_formation.get_grp_forma_byid(nomgrp1).subscribe((e1: any) => {
+                  Swal.fire({
+                    title: "formateur est occuppée dans cette date par le groupe" + e1.nom_groupe_forma,
+                    buttonsStyling: false,
+                    confirmButtonClass: "btn btn-success"
+                  })
+                });
+                }
+
+              });
+            });
+          }
+          else{
+            this.service_grp_formation.get_grp_forma_byid(nomgrp).subscribe((e: any) => {
+            Swal.fire({
+              title: "salle est occuppée dans cette date par le groupe "+e.nom_groupe_forma,
+              buttonsStyling: false,
+              confirmButtonClass: "btn btn-success"
+          });
+        });
+          }
+
+
+        });
+
+      });
+
+
+      /*  this.service_grp_formation.get_grp_forma_byformateur(nv_formateur).subscribe((d: any) => {
+        
+          d.forEach((elt:any) => {
+           this.formateur_ids.push(elt.id);
+          });
+    
+          this.service_seance.get_seance_by_list_grps_id(this.formateur_ids).subscribe((res: any) => {
+    
+            console.log(res);
+            if(res.length==0)
+            {
+              this.b_formateur= false;
+            }
+                   });
+        });
+    */
+
+
 
     }
-    else if(this.b_salle==false)
-    {
+    else if (this.b_salle == false) {
       Swal.fire({
         title: "salle est occuppée dans cette date !",
         buttonsStyling: false,
         confirmButtonClass: "btn btn-success"
-    });
-    
+      });
+
     }
-    else
-    {
+    else {
       Swal.fire({
         title: "formateur est occuppée dans cette date!",
         buttonsStyling: false,
         confirmButtonClass: "btn btn-success"
-    })
-      
+      })
+
     }
     // this.rowselected['formateur']=nv_formateur
     /*this.getdate(this.planifier_forma.value.date);
 
 */
 
+ 
+}
+else
+{
+  Swal.fire({
+    title: "capacite de la salle inferieur aux effectif du groupe ",
+    buttonsStyling: false,
+    confirmButtonClass: "btn btn-success"
+  })
+
+}
+})
   }
 
-  save_grp_forma()
-  {
-    if(this.groupe_forma.length!=0)
-    {
-      this.groupe_forma.forEach((element:any) => {
-        
-
+  save_grp_forma() {
+    if (this.groupe_forma.length != 0) {
+      this.groupe_forma.forEach((element: any) => {
         this.update_grp_form = {
-          formateur_id: element['formateur'] ,
-          local_id: element['salle'] ,
+          formateur_id: element['formateur'],
+          local_id: element['salle'],
         }
-    this.service_grp_formation.update_grp_forma(element['id'] ,this.update_grp_form).subscribe((data: any) => {
+
+
+        console.log(element['datedeb']);
+        this.service_grp_formation.update_grp_forma(element['id'], this.update_grp_form).subscribe((data: any) => {
+          //console.log(data);
+
+
+
+          // console.log(element['id']);
+          this.service_seance.get_seance(element['id']).subscribe((resul: any) => {
+            // console.log(resul);
+            if (resul != null) {
+              this.add_seance_forma = {
+                datedeb: element['datedeb'],
+                datefin: element['datefin'],
+                type: element['cours'],
+                groupe_formation_id: element['id'],
+              }
+
+              this.service_seance.update_seance(resul.id, this.add_seance_forma).subscribe((rest: any) => {
+                console.log(rest);
+
+              });
+            }
+            else {
+
+              this.add_seance_forma = {
+                datedeb: element['datedeb'],
+                datefin: element['datefin'],
+                type: element['cours'],
+                groupe_formation_id: element['id'],
+              }
+              console.log(this.add_seance_forma)
+              this.service_seance.add_seance(this.add_seance_forma).subscribe((res: any) => {
+                console.log(res);
+              });
+            }
+
+          });
+
+
+        });
+
+
+      });
+
+
+    }
+  }
+
+  initialiser(row: any) {
+
+    row.datedeb = '';
+    row.datefin = '';
+    row.formateur = null;
+    row.salle = null;
+    row.type = null;
+
+    this.groupe_forma = [...this.groupe_forma];
+    this.update_grp_form = {
+      formateur_id: null,
+      local_id: null,
+    }
+
+
+
+    this.service_grp_formation.update_grp_forma(row.id, this.update_grp_form).subscribe((data: any) => {
       //console.log(data);
 
-      this.add_seance_forma = {
-        datedeb: element['datedeb'] ,
-        datefin: element['datefin'] ,
-        type: element['cours'] ,
-        groupe_formation_id: data.id
-      }
-    /*  console.log(element['id']);
-      this.service_seance.get_seance(element['id']).subscribe((resul: any) => {
-       if( Object.keys(resul).length!=0)
-        {
-          this.service_seance.update_seance(resul.id,this.add_seance_forma).subscribe((rest: any) => {
-            console.log(rest);
 
+
+      // console.log(element['id']);
+      this.service_seance.get_seance(row.id).subscribe((resul: any) => {
+        // console.log(resul);
+        if (resul != null) {
+          this.add_seance_forma = {
+            datedeb: null,
+            datefin: null,
+            type: null,
+            groupe_formation_id: row.id,
+          }
+
+          this.service_seance.update_seance(resul.id, this.add_seance_forma).subscribe((rest: any) => {
+           
+            console.log(this.groupe_forma);
           });
         }
-        else{*/
-          this.service_seance.add_seance(this.add_seance_forma).subscribe((res: any) => {
-            console.log(res);
-          });
-        /*}
-       
+
+
       });
-*/
-  
+
+
     });
 
-
-  });
-
-
-  }
   }
 }
 

@@ -5,11 +5,11 @@
         <div class="card">
           <form [formGroup]="cherchergroupe" (ngSubmit)="recherche_grp()">
 
-            <div class="row">
-              <div class="col-sm-auto">
+            <div class="row  rowpad cen">
+              <div class="col-md-auto">
                 <mat-form-field appearance="fill">
                   <mat-label>formation</mat-label>
-                  <mat-select formControlName="certification_id" required   (change)="changevalue()">
+                  <mat-select formControlName="certification_id" required id="cer_id" (change)="changevalue()">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let cer of all_certif" [value]="cer.id">
                       {{cer.nom_formation}}
@@ -18,9 +18,7 @@
                 </mat-form-field>
               </div>
 
-
-
-              <div class="col-sm-auto">
+              <div class="col-md-auto">
                 <mat-form-field appearance="fill">
                   <mat-label>cours</mat-label>
                   <mat-select formControlName="cours" required>
@@ -31,9 +29,8 @@
                   </mat-select>
                 </mat-form-field>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-auto">
+
+              <div class="col-md-auto">
                 <mat-form-field appearance="fill">
                   <mat-label>ecole</mat-label>
                   <mat-select formControlName="ecole" required>
@@ -44,19 +41,22 @@
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
-              </div>
-              <div class="col-sm-auto">
-                <mat-radio-group aria-label="Select an option" formControlName="langue" required>
-                  <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
-                  <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
-                  <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
-                </mat-radio-group>
-              </div>
 
+              </div>
             </div>
+            <div class="lang-area cen">
+              <div><label>langue : </label></div>
+              <mat-radio-group aria-label="Select an option" formControlName="langue" required>
 
-         
-            <button class="btn btn-primary" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+                <mat-radio-button value="Français">français&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                <mat-radio-button value="Arabe">arabe&nbsp;&nbsp;&nbsp;</mat-radio-button>
+                <mat-radio-button value="Anglais">anglais&nbsp;</mat-radio-button>
+              </mat-radio-group>
+            </div>
+            <div class="pull-right">
+
+              <button class="btn btnrecherche" type="submit" [disabled]=!cherchergroupe.valid>rechercher</button>
+            </div>
           </form>
 
 
@@ -67,7 +67,7 @@
       <div class="col-md-5">
 
         <ngx-datatable #myTable class="material" [rows]="rows" [columnMode]="ColumnMode.force" [headerHeight]="50
-                    " [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected"
+                    " [footerHeight]="50" [rowHeight]="50" [limit]="5" [selected]="selected"
           [selectionType]="SelectionType.single" (activate)="onActivate($event)" (select)='onSelect($event)'
           (click)='onClick($event)'>
 
@@ -97,27 +97,27 @@
 
       </div>
 
-      <div class="col-md-1.5">
-        <button class="btn" (click)="add(selected[0])"> add
+      <div class="col-md-2">
+        <button class="btn ntlist" (click)="add(selected[0])"> add
           <span class="btn-label btn-label-right"><i class="nc-icon nc-minimal-right"></i></span>
         </button><br>
-        <button class="btn" (click)="addall(selected[0])"> add all
+        <button class="btn ntlist" (click)="addall(selected[0])"> add all
           <span class="btn-label btn-label-right"><i class="nc-icon nc-minimal-right"></i></span>
         </button><br>
-        <button class="btn" (click)="delete(selected2[0])">
+        <button class="btn ntlist" (click)="delete(selected2[0])">
           <span class="btn-label"><i class="nc-icon nc-minimal-left"></i></span>
           delete </button><br>
-        <button class="btn" (click)="deleteall(selected2[0])">
+        <button class="btn ntlist" (click)="deleteall(selected2[0])">
           <span class="btn-label"><i class="nc-icon nc-minimal-left"></i></span>
           delete all </button>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-5">
         <div class="card">
 
 
-          <ngx-datatable #myTable2 class="material" [rows]="sous_groupe_classe" [columnMode]="ColumnMode.force"
-            [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected2"
+          <ngx-datatable #myTable2 class="material"  [rows]="sous_groupe_classe" [columnMode]="ColumnMode.force"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [limit]="5" [selected]="selected2"
             [selectionType]="SelectionType.single" (select)='onSelect2($event)'>
 
             <ngx-datatable-column name="nom_groupe" prop="nom_groupe">
@@ -141,20 +141,17 @@
 
 
           </ngx-datatable>
-          <p>{{taillesousgroupe}}</p>
+          <span>Total : {{taillesousgroupe}}</span>
 
         </div>
 
-        <div class="row">
-          <div class="col-md-auto">
-            <button class="btn" (click)="down()"> down
-              <span class="btn-label btn-label"><i class="nc-icon nc-minimal-down"></i></span>
-            </button>
+        <div class="row inputnomgrp-group">
+          <div class="inputnomgrp">
+            <input type="text" id="nomgrp">
           </div>
-          <div class="col-md-auto">
-            <button class="btn" (click)="up(selected3[0])"> up
-              <span class="btn-label btn-label"><i class="nc-icon nc-minimal-top"></i></span>
-            </button>
+          <div class="btns-group">
+            <button class="btn updow" (click)="down()"> down</button>
+            <button class="btn updow" (click)="up(selected3[0])"> up</button>
           </div>
         </div>
       </div>
@@ -162,9 +159,8 @@
       <div class="col-md-12">
         <div class="card">
 
-          <ngx-datatable #myTable3 class="material" [
-          rows]="groupe_forma" [columnMode]="ColumnMode.force"
-            [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [selected]="selected3"
+          <ngx-datatable #myTable3 class="material" [rows]="groupe_forma" [columnMode]="ColumnMode.force"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [limit]="5" [selected]="selected3"
             [selectionType]="SelectionType.single" (select)='onSelect3($event)'>
 
             <!-- Row Detail Template -->
@@ -208,7 +204,7 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="nom_groupe" [width]="80">
               <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                <strong>groupe {{ row.name }}</strong>
+                <strong> {{ row.name }}</strong>
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column name="composer de" [width]="80">
